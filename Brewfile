@@ -4,6 +4,7 @@ tap "homebrew/cask-drivers"
 tap "homebrew/cask-versions"
 tap "homebrew/core"
 tap "homebrew/services"
+tap "stripe/stripe-cli"
 
 # general
 cask "private-internet-access"
@@ -85,13 +86,17 @@ brew "awscli"
 cask "google-cloud-sdk"
 brew "azure-cli"
 
+# video game / simulation engineering
+cask "unity-hub"
+
 # network engineering
 brew "nmap"
 brew "httpie"
 brew "speedtest-cli"
 
 # payment processing platforms
-# stripe/stripe-cli/stripe
+# docs: https://stripe.com/docs/stripe-cli
+brew "stripe/stripe-cli/stripe"
 
 # testing
 cask "postman"
