@@ -1,0 +1,73 @@
+[include]
+  path = .untracked-gitconfig
+
+[pager]
+  branch = false
+
+[alias]
+  aliases = !git config --get-regexp ^alias\\. | sed -e s/^alias.// -e s/\\ /\\ $(printf \"\\043\")\\ / | column -t -s $(printf \"\\043\")
+  alias = aliases
+  browse = !hub browse
+  br = branch
+  s = status
+  a = add
+  add-deleted-only = !git a $(git ls-files --deleted)
+  p = pull
+  aa = add .
+  r = reset
+  cmt = commit -m
+  default-branch = !git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
+  dbr = default-branch
+  d = diff
+  dc = diff --cached
+  diff-master = !git diff master..$(git branch-name)
+  dm = diff-master
+  new-branch = checkout -b
+  nbr = new-branch
+  nb = new-branch
+  undo-local-commit = reset HEAD~1
+  ulc = undo-local-commit
+  branch-name = rev-parse --abbrev-ref HEAD
+  bn = branch-name
+  add-upstream = remote add upstream $1
+  fetch-upstream = fetch upstream
+  fu = fetch-upstream
+  fetch-upstream-master = fetch upstream master
+  fum = fetch-upstream-master
+  rebase-upstream-master = rebase upstream/master
+  rum = rebase upstream/master
+  push-new-branch = !git push -u origin $(git branch-name)
+  pnb = push-new-branch
+  pr = !git push-new-branch && hub pull-request
+  merge-and-delete = !git merge-branch && git full-delete-current-branch
+  prune-local-branches-dry = remote prune origin --dry-run
+  prune-local-branches-execute = remote prune origin
+  merge-branch = "! \
+    current_branch=$(git branch-name); \
+    default_branch=$(git default-branch); \
+    if [ \"${current_branch}\" != \"${default_branch}\" ]; then \
+      echo 'Merging branch with master'; \
+      git checkout \"${default_branch}\"; \
+      git merge \"${current_branch}\"; \
+      echo 'Pushing up merge to origin'; \
+      git push; \
+      git checkout \"${current_branch}\"; \
+    else \
+      echo 'Not running this command on the default branch'; \
+    fi \
+  "
+  full-delete-current-branch = "! \
+    current_branch=$(git branch-name); \
+    default_branch=$(git default-branch); \
+    if [ \"${current_branch}\" != \"${default_branch}\" ]; then \
+      git checkout \"${default_branch}\"; \
+      echo 'Deleting local branch'; \
+      git branch -D \"${current_branch}\"; \
+      echo 'Pushing delete to origin'; \
+      git push origin :\"${current_branch}\"; \
+    else \
+      echo 'Not running this command on the default branch'; \
+    fi \
+  "
+
+
