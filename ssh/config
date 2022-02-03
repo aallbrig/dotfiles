@@ -1,0 +1,21 @@
+# Personal GitHub Identity Reference
+Host github.com
+    HostName github.com
+    PreferredAuthentications publickey
+    IdentityFile ~/.ssh/id_ed2551
+
+# General Purpose Work GitHub Identity Reference
+Host github.com
+    HostName github.com
+    PreferredAuthentications publickey
+    IdentityFile ~/.ssh/id_rsa_work
+
+Host *amazonaws.com
+    IdentityFile ~/.ssh/andrew-allbright-keypair.pem
+    User ec2-user
+
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed2551
+
