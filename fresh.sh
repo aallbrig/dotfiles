@@ -34,6 +34,10 @@ if ! stat ${HOME}/Brewfile &> /dev/null || [[ ! -L ${HOME}/Brewfile ]] ; then
   ln -s $(pwd)/Brewfile ${HOME}/Brewfile
 fi
 
+if ! stat ${HOME}/.untracked-gitconfig &> /dev/null ; then
+  echo "❌ Expected File Not Found: ~/.untracked-gitconfig (pulled in by ~/.gitconfig)"
+fi
+
 if ! stat ${HOME}/.gitconfig &> /dev/null || [[ ! -L ${HOME}/.gitconfig ]] ; then
   echo "🪓 Clearing non symbolic link .gitconfig (if exists)"
   rm ${HOME}/.gitconfig
