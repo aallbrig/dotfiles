@@ -130,6 +130,8 @@ fi
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/local/bin/terraform terraform
 
+ssh-add -K ~/.ssh/id_ed25519
+
 # I have language specific rc files (e.g. ~/.git-shellrc, ~/.node-shellrc, ~/.go-shellrc) where language specific configuration (and/or generate fns shell fns) exist
 for shellrc in $HOME/.*-shellrc; do
   . $shellrc

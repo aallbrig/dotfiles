@@ -1,8 +1,7 @@
-# Personal GitHub Identity Reference
 Host github.com
     HostName github.com
     PreferredAuthentications publickey
-    IdentityFile ~/.ssh/id_ed2551
+    IdentityFile ~/.ssh/ssh-ed25519
 
 # General Purpose Work GitHub Identity Reference
 Host github.com
@@ -17,5 +16,4 @@ Host *amazonaws.com
 Host *
     AddKeysToAgent yes
     UseKeychain yes
-    IdentityFile ~/.ssh/id_ed2551
-
+    IdentityFile ~/.ssh/ssh-ed25519
