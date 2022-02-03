@@ -59,3 +59,5 @@ if ! stat ${HOME}/.ssh/config &> /dev/null || [[ ! -L ${HOME}/.ssh/config ]] ; t
   echo "🪱 Symlinking .ssh/config"
   ln -s $(pwd)/ssh/config ${HOME}/.ssh/config
 fi
+
+source ./.macos

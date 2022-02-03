@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# TODO: idempotency for all sections
+# Read current value and if != then install. If any config installs then 'killall' section process
+
+# Unowned section
+defaults write com.apple.menuextra.clock "DateFormat" -string "\"EEE d MMM HH:mm:ss\""
+
+# System UI Server section
+defaults write com.apple.screencapture "location" -string "${HOME}/Desktop/Screenshots"
+defaults write com.apple.menuextra.clock "FlashDateSeparators" -bool "true"
+killall SystemUIServer
+
+# Dock section
+defaults write com.apple.dock "orientation" -string "left"
+killall Dock
+
+# Finder section
+defaults write NSGlobalDomain "NSTableViewDefaultSizeMode" -int "2"
+defaults write com.apple.finder "FXEnableExtensionChangeWarning" -bool "false"
+defaults write NSGlobalDomain "NSToolbarTitleViewRolloverDelay" -float "0"
+defaults write com.apple.finder "QuitMenuItem" -bool "true"
+defaults write com.apple.Finder "AppleShowAllFiles" -bool "true"
+defaults write NSGlobalDomain "AppleShowAllExtensions" -bool "true"
+killall Finder
