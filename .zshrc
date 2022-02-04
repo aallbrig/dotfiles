@@ -95,12 +95,10 @@ alias j=jrnl
 alias g=git
 alias gh=hub
 alias h=gh
-alias c=clear
 alias k=kubectl
 alias tf=terraform
 alias watch='watch ' # allows "watch" to expand another alias (e.g. watch k get po --all-namespaces)
 alias tree='tree -S'
-alias lolcat='lolcat 2&> /dev/null '
 
 # Generators for languages are in various
 function available_generator_functions() {
