@@ -74,12 +74,12 @@ brew "terraform"
 cask "vmware-horizon-client"
 
 # cloud native engineering
-brew "kubernetes-cli"
-brew "istioctl"
-brew "helm"
-brew "kind"
+cask "docker"
 brew "minikube"
+brew "kubernetes-cli"
+brew "helm"
 brew "operator-sdk"
+brew "istioctl"
 
 # cloud admin
 brew "awscli"
