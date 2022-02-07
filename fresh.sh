@@ -64,4 +64,11 @@ if [[ ! -L "${HOME}"/.ssh/config ]] ; then
   ln -s $(pwd)/ssh/config "${HOME}"/.ssh/config
 fi
 
+if [[ ! -L "${HOME}"/.vimrc ]] ; then
+  echo "🪓 Clearing non symbolic link .vimrc (if exists)"
+  rm "${HOME}"/.vimrc
+  echo "🪱 Symlinking .vimrc"
+  ln -s $(pwd)/.vimrc "${HOME}"/.vimrc
+fi
+
 source ./.macos
