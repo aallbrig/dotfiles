@@ -8,9 +8,12 @@ Download this repo locally. Run this script. The script is intentionally idempot
 ./fresh.sh
 ```
 
-## Privileged access setup
+### Privileged access setup
 
 I didn't want to have to deal with sudo every time the script is run. Use this script to setup items that require root privileges.
 ```bash
 ./admin_setup.sh
 ```
+
+### Manual steps
+For now, one must import unity profiles from the source code directory. Check out `unity_profiles` folder for unity profiles to import into the unity editor.
