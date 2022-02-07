@@ -7,3 +7,10 @@ Download this repo locally. Run this script. The script is intentionally idempot
 ```bash
 ./fresh.sh
 ```
+
+## Privileged access setup
+
+I didn't want to have to deal with sudo every time the script is run. Use this script to setup items that require root privileges.
+```bash
+./admin_setup.sh
+```
