@@ -17,3 +17,10 @@ I didn't want to have to deal with sudo every time the script is run. Use this s
 
 ### Manual steps
 For now, one must import unity profiles from the source code directory. Check out `unity_profiles` folder for unity profiles to import into the unity editor.
+
+## Uninstall
+In order to uninstall these dotfiles run the following commands.
+```bash
+./uninstall.sh
+./admin_uninstall.sh
+```
