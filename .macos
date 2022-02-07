@@ -4,7 +4,6 @@
 # Read current value and if != then install. If any config installs then 'killall' section process
 
 # Unowned section
-sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
 defaults write com.apple.menuextra.clock "DateFormat" -string "\"EEE d MMM HH:mm:ss\""
 defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
 defaults write com.apple.ActivityMonitor IconType -int 5
