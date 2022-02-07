@@ -72,7 +72,7 @@ source $ZSH/oh-my-zsh.sh
 # export ARCHFLAGS="-arch x86_64"
 
 # ssh
-export SSH_KEY_PATH=~/.ssh/rsa_id
+export SSH_KEY_PATH="${HOME}"/.ssh/id_ed25519
 
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
@@ -125,15 +125,13 @@ if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] &&
   exec tmux
 fi
 
-
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/local/bin/terraform terraform
 
 # ssh-add run without arguments adds in default public keys
-ssh-add 
+ssh-add
 
 # I have language specific rc files (e.g. ~/.git-shellrc, ~/.node-shellrc, ~/.go-shellrc) where language specific configuration (and/or generate fns shell fns) exist
-for shellrc in $HOME/.*-shellrc; do
+for shellrc in "${HOME}"/.*-shellrc; do
   . $shellrc
 done
-
