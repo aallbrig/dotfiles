@@ -117,7 +117,8 @@ export KUBECONFIG=$HOME/pi-cluster-config:$HOME/.kube/config
 
 # export PATH=~/Library/Python/2.7/bin:$PATH
 export PATH=/usr/local/bin:$PATH
-export PATH=/usr/local/opt:$PATH
+export PAth=/usr/local/opt:$PATH
+export PATH="${HOME}"/bin:$PATH
 
 # <3 tmux
 if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
