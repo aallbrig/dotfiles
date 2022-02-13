@@ -4,3 +4,39 @@
 # project.
 
 echo "🦉 Uninstall script"
+
+if [[ -L "${HOME}"/.vimrc ]] ; then
+  echo "🪓 Deleting .vimrc"
+  rm "${HOME}"/.vimrc
+fi
+
+if [[ -L "${HOME}"/.ssh/config ]] ; then
+  echo "🪓 Deleting .ssh/config"
+  rm "${HOME}"/.ssh/config
+fi
+
+if [[ -e "${HOME}"/.ssh ]] ; then
+  echo "❌ it is up to the user to delete .ssh"
+fi
+
+
+if [[ -L "${HOME}"/.tmux.conf ]] ; then
+  echo "🪓 Deleting .tmux.conf"
+  rm "${HOME}"/.tmux.conf
+fi
+
+if [[ -L "${HOME}"/.gitconfig ]] ; then
+  echo "🪓 Deleting .gitconfig"
+  rm "${HOME}"/.gitconfig
+fi
+
+if [[ -e "${HOME}"/.untracked-gitconfig ]] ; then
+  echo "❌ it is up to the user to delete .untracked-gitconfig"
+fi
+
+echo "❌ it is up to the user to delete remove homebrew installation"
+
+if [[ -L "${HOME}"/.zshrc ]] ; then
+  echo "🪓 Deleting .zshrc"
+  rm "${HOME}"/.zshrc
+fi
