@@ -27,13 +27,6 @@ if ! brew bundle check --file ./Brewfile &> /dev/null ; then
   brew bundle install --file ./Brewfile
 fi
 
-if [[ ! -L "${HOME}"/Brewfile ]] ; then
-  echo "🪓 Clearing non symbolic link Brewfile (if exists)"
-  rm "${HOME}"/Brewfile
-  echo "🪱 Symlinking Brewfile"
-  ln -s $(pwd)/Brewfile "${HOME}"/Brewfile
-fi
-
 if [[ ! -e "${HOME}"/.untracked-gitconfig ]] ; then
   echo "❌ Expected File Not Found: ~/.untracked-gitconfig (pulled in by ~/.gitconfig)"
 fi
