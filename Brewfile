@@ -37,6 +37,7 @@ brew "coreutils"
 brew "jq"
 brew "watch"
 brew "lolcat"
+brew "gh"
 
 # language runtimes
 brew "python"
