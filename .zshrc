@@ -93,8 +93,6 @@ alias egcf=edit-git-config
 
 alias j=jrnl
 alias g=git
-alias gh=hub
-alias h=gh
 alias k=kubectl
 alias tf=terraform
 alias watch='watch ' # allows "watch" to expand another alias (e.g. watch k get po --all-namespaces)
