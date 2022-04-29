@@ -1,6 +1,7 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
+export PATH="${HOME}/go/bin:${PATH}"
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
@@ -51,7 +52,7 @@ ZSH_THEME="lambda"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git nvm)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -63,7 +64,7 @@ source $ZSH/oh-my-zsh.sh
 
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
+   export EDITOR='vim'
 # else
 #   export EDITOR='mvim'
 # fi
@@ -98,6 +99,9 @@ alias tf=terraform
 alias watch='watch ' # allows "watch" to expand another alias (e.g. watch k get po --all-namespaces)
 alias tree='tree -S'
 
+# Custom Environment Variables
+export EDITOR=vim
+
 # Generators for languages are in various
 function available_generator_functions() {
   cat $HOME/.*-shellrc | grep '^\w*function gen::.*()' | sed -e 's/function //g' -e 's/() {//g'
@@ -117,6 +121,8 @@ export KUBECONFIG=$HOME/pi-cluster-config:$HOME/.kube/config
 export PATH=/usr/local/bin:$PATH
 export PAth=/usr/local/opt:$PATH
 export PATH="${HOME}"/bin:$PATH
+export PATH="${PATH}":"${HOME}"/Library/Python/3.9/lib/python/site-packages
+
 
 # <3 tmux
 if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
@@ -133,3 +139,7 @@ ssh-add
 for shellrc in "${HOME}"/.*-shellrc; do
   . $shellrc
 done
+
+export NVM_DIR=~/.nvm
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
