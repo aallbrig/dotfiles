@@ -69,3 +69,5 @@
       echo 'Not running this command on the default branch'; \
     fi \
   "
+[init]
+	defaultBranch = main
