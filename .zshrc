@@ -1,8 +1,4 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
-
-export PATH="${HOME}/go/bin:${PATH}"
-# Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
@@ -118,6 +114,12 @@ complete -F __start_kubectl k # get k8s autocompletion working with "k" alias
 export KUBECONFIG=$HOME/pi-cluster-config:$HOME/.kube/config
 
 # export PATH=~/Library/Python/2.7/bin:$PATH
+# for pyenv
+export PATH="$(pyenv root)/shims:${PATH}"
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
+
+export PATH="${HOME}/go/bin:${PATH}"
+# Path to your oh-my-zsh installation.
 export PATH=/usr/local/bin:$PATH
 export PAth=/usr/local/opt:$PATH
 export PATH="${HOME}"/bin:$PATH
@@ -125,9 +127,12 @@ export PATH="${PATH}":"${HOME}"/Library/Python/3.9/lib/python/site-packages
 
 
 # <3 tmux
-if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
-  exec tmux
+if [ -z "$INTELLIJ_ENVIRONMENT_READER" ]; then
+	if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+	  exec tmux
+	fi
 fi
+
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/local/bin/terraform terraform
