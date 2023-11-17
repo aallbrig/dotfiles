@@ -64,4 +64,7 @@ if [[ ! -L "${HOME}"/.vimrc ]] ; then
   ln -s $(pwd)/.vimrc "${HOME}"/.vimrc
 fi
 
-source ./.macos
+if [ "$(uname)" = "Darwin" ]; then
+    source ./.macos
+fi
+
