@@ -1,5 +1,6 @@
 # If you come from bash you might have to change your $PATH.
 export ZSH=$HOME/.oh-my-zsh
+export GOPATH=$(go env GOPATH)
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -51,6 +52,7 @@ ZSH_THEME="lambda"
 plugins=(git nvm)
 
 source $ZSH/oh-my-zsh.sh
+
 
 # User configuration
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -110,12 +112,14 @@ if test -f /usr/local/share/zsh/site-functions/aws_zsh_completer.sh; then
 fi
 source <(kubectl completion zsh)
 complete -F __start_kubectl k # get k8s autocompletion working with "k" alias
+# for aws
+complete -C "$(which aws_completer)" aws
 
 export KUBECONFIG=$HOME/pi-cluster-config:$HOME/.kube/config
 
 # export PATH=~/Library/Python/2.7/bin:$PATH
 # for pyenv
-export PATH="$(pyenv root)/shims:${PATH}"
+# export PATH="$(pyenv root)/shims:${PATH}"
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 export PATH="${HOME}/go/bin:${PATH}"
@@ -124,6 +128,9 @@ export PATH=/usr/local/bin:$PATH
 export PAth=/usr/local/opt:$PATH
 export PATH="${HOME}"/bin:$PATH
 export PATH="${PATH}":"${HOME}"/Library/Python/3.9/lib/python/site-packages
+export PATH="${PATH}":"/Users/${USER}/Library/Application Support/JetBrains/Toolbox/scripts"
+export PATH=$PATH:$(go env GOPATH)/bin
+export PATH="$HOME/.amplify/bin:$PATH"
 
 
 # <3 tmux
@@ -141,10 +148,21 @@ complete -o nospace -C /usr/local/bin/terraform terraform
 ssh-add
 
 # I have language specific rc files (e.g. ~/.git-shellrc, ~/.node-shellrc, ~/.go-shellrc) where language specific configuration (and/or generate fns shell fns) exist
-for shellrc in "${HOME}"/.*-shellrc; do
-  . $shellrc
-done
+# shellrc_files=$("${HOME}"/.*-shellrc 2> /dev/null)
+# if [ -n shellrc_files ]; then
+  # for shellrc in $shellrc_files; do
+    # . $shellrc
+  # done
+# fi
 
-export NVM_DIR=~/.nvm
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+export NVM_DIR="$HOME/.nvm"
+mkdir -p "${NVM_DIR}"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
+# for aws autocompletion
+autoload bashcompinit && bashcompinit
+autoload -Uz compinit && compinit
+
+
+eval "$(gh copilot alias -- zsh)"
