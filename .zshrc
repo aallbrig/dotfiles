@@ -71,7 +71,7 @@ source $ZSH/oh-my-zsh.sh
 # export ARCHFLAGS="-arch x86_64"
 
 # ssh
-export SSH_KEY_PATH="${HOME}"/.ssh/id_ed25519
+export SSH_KEY_PATH=~/.ssh/id_ed25519
 
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
@@ -115,23 +115,23 @@ complete -F __start_kubectl k # get k8s autocompletion working with "k" alias
 # for aws
 complete -C "$(which aws_completer)" aws
 
-export KUBECONFIG=$HOME/pi-cluster-config:$HOME/.kube/config
+# export KUBECONFIG=$HOME/pi-cluster-config:$HOME/.kube/config
+export KUBECONFIG=$HOME/.kube/config
 
 # export PATH=~/Library/Python/2.7/bin:$PATH
 # for pyenv
 # export PATH="$(pyenv root)/shims:${PATH}"
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-export PATH="${HOME}/go/bin:${PATH}"
 # Path to your oh-my-zsh installation.
+export PATH="~/go/bin:${PATH}"
 export PATH=/usr/local/bin:$PATH
 export PAth=/usr/local/opt:$PATH
-export PATH="${HOME}"/bin:$PATH
-export PATH="${PATH}":"${HOME}"/Library/Python/3.9/lib/python/site-packages
+export PATH=~/bin:$PATH
+export PATH="${PATH}":~/Library/Python/3.9/lib/python/site-packages
 export PATH="${PATH}":"/Users/${USER}/Library/Application Support/JetBrains/Toolbox/scripts"
 export PATH=$PATH:$(go env GOPATH)/bin
 export PATH="$HOME/.amplify/bin:$PATH"
-
 
 # <3 tmux
 if [ -z "$INTELLIJ_ENVIRONMENT_READER" ]; then
@@ -148,7 +148,7 @@ complete -o nospace -C /usr/local/bin/terraform terraform
 ssh-add
 
 # I have language specific rc files (e.g. ~/.git-shellrc, ~/.node-shellrc, ~/.go-shellrc) where language specific configuration (and/or generate fns shell fns) exist
-# shellrc_files=$("${HOME}"/.*-shellrc 2> /dev/null)
+# shellrc_files=$(~/.*-shellrc 2> /dev/null)
 # if [ -n shellrc_files ]; then
   # for shellrc in $shellrc_files; do
     # . $shellrc
@@ -163,6 +163,4 @@ mkdir -p "${NVM_DIR}"
 # for aws autocompletion
 autoload bashcompinit && bashcompinit
 autoload -Uz compinit && compinit
-
-
 eval "$(gh copilot alias -- zsh)"
