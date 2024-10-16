@@ -15,5 +15,4 @@ Host *amazonaws.com
 
 Host *
     AddKeysToAgent yes
-    UseKeychain yes
     IdentityFile ~/.ssh/ssh-ed25519
