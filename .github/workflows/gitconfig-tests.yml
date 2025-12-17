@@ -1,0 +1,24 @@
+name: Git Configuration Tests
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - '.gitconfig'
+      - 'scripts/test-gitconfig.sh'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - '.gitconfig'
+      - 'scripts/test-gitconfig.sh'
+
+jobs:
+  test-gitconfig:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Run git configuration tests
+      run: ./scripts/test-gitconfig.sh

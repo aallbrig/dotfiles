@@ -1,0 +1,24 @@
+name: Brewfile Tests
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'Brewfile'
+      - 'scripts/test-brewfile.sh'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'Brewfile'
+      - 'scripts/test-brewfile.sh'
+
+jobs:
+  test-brewfile:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Run Brewfile validation tests
+      run: ./scripts/test-brewfile.sh
