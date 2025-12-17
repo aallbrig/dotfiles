@@ -1,0 +1,21 @@
+# .aliases - POSIX-compliant aliases
+# Can be sourced by any POSIX shell (sh, bash, zsh, dash)
+
+# Shell configuration aliases
+alias source-zshrc='source ~/.zshrc'
+alias szrc='source ~/.zshrc'
+alias edit-zshrc='vim ~/.zshrc'
+alias ezrc='vim ~/.zshrc'
+
+# Git configuration aliases
+alias edit-git-config='vim ~/.gitconfig'
+alias edit-gitconfig='vim ~/.gitconfig'
+alias egcf='vim ~/.gitconfig'
+
+# Common command aliases
+alias j='jrnl'
+alias g='git'
+alias k='kubectl'
+alias tf='terraform'
+alias watch='watch '
+alias tree='tree -S'

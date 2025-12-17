@@ -37,10 +37,23 @@ zsh_shell_setup() {
 	  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	fi
 
+	if [[ ! -L ~/.profile ]] ; then
+	  echo "🪓 Clearing non symbolic link .profile (if exists)"
+	  mv ~/.profile ~/.profile.old 2>/dev/null || true
+	  echo "🪱 Symlinking .profile"
+	  ln -s $(pwd)/.profile ~/.profile
+	fi
+
+	if [[ ! -L ~/.aliases ]] ; then
+	  echo "🪓 Clearing non symbolic link .aliases (if exists)"
+	  mv ~/.aliases ~/.aliases.old 2>/dev/null || true
+	  echo "🪱 Symlinking .aliases"
+	  ln -s $(pwd)/.aliases ~/.aliases
+	fi
+
 	if [[ ! -L ~/.zshrc ]] ; then
 	  echo "🪓 Clearing non symbolic link shell profile"
 	  mv ~/.zshrc ~/.zshrc.old
-
 	  echo "🪱 Symlinking shell profile"
 	  ln -s $(pwd)/.zshrc ~/.zshrc
 	fi
