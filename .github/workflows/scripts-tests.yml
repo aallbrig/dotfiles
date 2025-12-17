@@ -1,0 +1,29 @@
+name: Shell Scripts Tests
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'install.sh'
+      - 'uninstall.sh'
+      - 'scripts/test-scripts.sh'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'install.sh'
+      - 'uninstall.sh'
+      - 'scripts/test-scripts.sh'
+
+jobs:
+  test-scripts:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Install shellcheck
+      run: sudo apt-get update && sudo apt-get install -y shellcheck
+    
+    - name: Run shell scripts tests
+      run: ./scripts/test-scripts.sh

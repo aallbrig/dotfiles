@@ -1,0 +1,27 @@
+name: Zsh Configuration Tests
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - '.zshrc'
+      - 'scripts/test-zshrc.sh'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - '.zshrc'
+      - 'scripts/test-zshrc.sh'
+
+jobs:
+  test-zsh:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Install zsh and shellcheck
+      run: sudo apt-get update && sudo apt-get install -y zsh shellcheck
+    
+    - name: Run zsh configuration tests
+      run: ./scripts/test-zshrc.sh
