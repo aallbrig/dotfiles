@@ -40,3 +40,13 @@ if [[ -L "${HOME}"/.zshrc ]] ; then
   echo "🪓 Deleting .zshrc"
   rm "${HOME}"/.zshrc
 fi
+
+if [[ -L "${HOME}"/.aliases ]] ; then
+  echo "🪓 Deleting .aliases"
+  rm "${HOME}"/.aliases
+fi
+
+if [[ -L "${HOME}"/.profile ]] ; then
+  echo "🪓 Deleting .profile"
+  rm "${HOME}"/.profile
+fi

@@ -1,6 +1,9 @@
+# Load POSIX-compliant shell configuration
+[ -f ~/.profile ] && source ~/.profile
+[ -f ~/.aliases ] && source ~/.aliases
+
 # If you come from bash you might have to change your $PATH.
 export ZSH=$HOME/.oh-my-zsh
-export GOPATH=$(go env GOPATH)
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -60,53 +63,16 @@ source $ZSH/oh-my-zsh.sh
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
+# Zsh-specific configuration below
+# (Environment variables and aliases are in ~/.profile and ~/.aliases)
 
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# ssh
-export SSH_KEY_PATH=~/.ssh/id_ed25519
-
-export CLICOLOR=1
-export LSCOLORS=GxFxCxDxBxegedabagaced
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-
-alias source-zshrc='source ~/.zshrc'
-alias szrc=source-zshrc
-alias edit-zshrc='vim ~/.zshrc'
-alias ezrc=edit-zshrc
-
-alias edit-git-config='vim ~/.gitconfig'
-alias edit-gitconfig=edit-git-config
-alias egcf=edit-git-config
-
-alias j=jrnl
-alias g=git
-alias k=kubectl
-alias tf=terraform
-alias watch='watch ' # allows "watch" to expand another alias (e.g. watch k get po --all-namespaces)
-alias tree='tree -S'
-
-# Custom Environment Variables
-export EDITOR=vim
-
-# Generators for languages are in various
+# Zsh-specific functions
 function available_generator_functions() {
   cat $HOME/.*-shellrc | grep '^\w*function gen::.*()' | sed -e 's/function //g' -e 's/() {//g'
 }
 alias agf='available_generator_functions'
 
-# autocompletion
+# Zsh autocompletion
 if test -f /usr/local/share/zsh/site-functions/aws_zsh_completer.sh; then
   source /usr/local/share/zsh/site-functions/aws_zsh_completer.sh
 fi
@@ -115,23 +81,7 @@ complete -F __start_kubectl k # get k8s autocompletion working with "k" alias
 # for aws
 complete -C "$(which aws_completer)" aws
 
-# export KUBECONFIG=$HOME/pi-cluster-config:$HOME/.kube/config
-export KUBECONFIG=$HOME/.kube/config
-
-# export PATH=~/Library/Python/2.7/bin:$PATH
-# for pyenv
-# export PATH="$(pyenv root)/shims:${PATH}"
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
-
-# Path to your oh-my-zsh installation.
-export PATH="~/go/bin:${PATH}"
-export PATH=/usr/local/bin:$PATH
-export PAth=/usr/local/opt:$PATH
-export PATH=~/bin:$PATH
-export PATH="${PATH}":~/Library/Python/3.9/lib/python/site-packages
-export PATH="${PATH}":"/Users/${USER}/Library/Application Support/JetBrains/Toolbox/scripts"
-export PATH=$PATH:$(go env GOPATH)/bin
-export PATH="$HOME/.amplify/bin:$PATH"
+# Additional PATH and environment variables are in ~/.profile
 
 # <3 tmux
 if [ -z "$INTELLIJ_ENVIRONMENT_READER" ]; then
@@ -155,7 +105,7 @@ ssh-add
   # done
 # fi
 
-export NVM_DIR="$HOME/.nvm"
+# NVM_DIR is set in ~/.profile
 mkdir -p "${NVM_DIR}"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion

@@ -1,0 +1,41 @@
+name: POSIX Compliance Tests
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - '.profile'
+      - '.aliases'
+      - 'scripts/test-posix.sh'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - '.profile'
+      - '.aliases'
+      - 'scripts/test-posix.sh'
+
+jobs:
+  test-posix:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Install shellcheck
+      run: sudo apt-get update && sudo apt-get install -y shellcheck
+    
+    - name: Run POSIX compliance tests
+      run: ./scripts/test-posix.sh
+    
+    - name: Test files with dash (pure POSIX shell)
+      run: |
+        echo "Testing with dash shell..."
+        dash -c ". ./.profile && echo '✅ .profile works with dash'"
+        dash -c ". ./.aliases && echo '✅ .aliases works with dash'"
+    
+    - name: Test files with bash
+      run: |
+        echo "Testing with bash shell..."
+        bash -c ". ./.profile && echo '✅ .profile works with bash'"
+        bash -c ". ./.aliases && echo '✅ .aliases works with bash'"
