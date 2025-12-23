@@ -19,3 +19,8 @@ alias k='kubectl'
 alias tf='terraform'
 alias watch='watch '
 alias tree='tree -S'
+
+# Godot alias - uses flatpak version if available
+if command -v flatpak >/dev/null 2>&1 && flatpak list --app 2>/dev/null | grep -q org.godotengine.Godot; then
+    # alias godot='flatpak run org.godotengine.Godot'
+fi
