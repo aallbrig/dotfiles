@@ -113,4 +113,4 @@ mkdir -p "${NVM_DIR}"
 # for aws autocompletion
 autoload bashcompinit && bashcompinit
 autoload -Uz compinit && compinit
-eval "$(gh copilot alias -- zsh)"
+# eval "$(gh copilot alias -- zsh)"

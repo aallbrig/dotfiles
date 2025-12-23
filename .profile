@@ -29,6 +29,7 @@ export PATH="${PATH}:/Users/${USER}/Library/Application Support/JetBrains/Toolbo
 GOBIN_PATH=$(go env GOPATH 2>/dev/null || echo "$HOME/go")/bin
 export PATH="$PATH:$GOBIN_PATH"
 export PATH="$HOME/.amplify/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 
 # NVM directory (declare here, initialization happens in shell-specific rc)
 export NVM_DIR="$HOME/.nvm"
