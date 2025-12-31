@@ -17,17 +17,17 @@ export KUBECONFIG="$HOME/.kube/config"
 # Go configuration
 GOPATH=$(go env GOPATH 2>/dev/null || echo "$HOME/go")
 export GOPATH
+GOBIN_PATH=$(go env GOPATH 2>/dev/null || echo "$HOME/go")/bin
 
 # PATH modifications
 export PATH="/usr/local/go/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
+export PATH="$PATH:$GOBIN_PATH"
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/opt:$PATH"
 export PATH="$HOME/bin:$PATH"
 export PATH="${PATH}:$HOME/Library/Python/3.9/lib/python/site-packages"
 export PATH="${PATH}:/Users/${USER}/Library/Application Support/JetBrains/Toolbox/scripts"
-GOBIN_PATH=$(go env GOPATH 2>/dev/null || echo "$HOME/go")/bin
-export PATH="$PATH:$GOBIN_PATH"
 export PATH="$HOME/.amplify/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 
