@@ -114,3 +114,7 @@ mkdir -p "${NVM_DIR}"
 autoload bashcompinit && bashcompinit
 autoload -Uz compinit && compinit
 # eval "$(gh copilot alias -- zsh)"
+
+# peon-ping quick controls
+alias peon="bash $HOME/.claude/hooks/peon-ping/peon.sh"
+[ -f $HOME/.claude/hooks/peon-ping/completions.bash ] && source $HOME/.claude/hooks/peon-ping/completions.bash
