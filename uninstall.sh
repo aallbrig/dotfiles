@@ -46,6 +46,11 @@ if [[ -L "${HOME}"/.aliases ]] ; then
   rm "${HOME}"/.aliases
 fi
 
+if [[ -L "${HOME}"/.functions ]] ; then
+  echo "🪓 Deleting .functions"
+  rm "${HOME}"/.functions
+fi
+
 if [[ -L "${HOME}"/.profile ]] ; then
   echo "🪓 Deleting .profile"
   rm "${HOME}"/.profile

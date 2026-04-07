@@ -6,12 +6,14 @@ on:
     paths:
       - 'install.sh'
       - 'uninstall.sh'
+      - 'scripts/check-symlinks.sh'
       - 'scripts/test-scripts.sh'
   pull_request:
     branches: [ main, master ]
     paths:
       - 'install.sh'
       - 'uninstall.sh'
+      - 'scripts/check-symlinks.sh'
       - 'scripts/test-scripts.sh'
 
 jobs:

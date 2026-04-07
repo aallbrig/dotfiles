@@ -51,6 +51,13 @@ zsh_shell_setup() {
 	  ln -s $(pwd)/.aliases ~/.aliases
 	fi
 
+	if [[ ! -L ~/.functions ]] ; then
+	  echo "🪓 Clearing non symbolic link .functions (if exists)"
+	  mv ~/.functions ~/.functions.old 2>/dev/null || true
+	  echo "🪱 Symlinking .functions"
+	  ln -s $(pwd)/.functions ~/.functions
+	fi
+
 	if [[ ! -L ~/.zshrc ]] ; then
 	  echo "🪓 Clearing non symbolic link shell profile"
 	  mv ~/.zshrc ~/.zshrc.old

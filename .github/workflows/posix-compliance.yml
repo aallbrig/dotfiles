@@ -6,12 +6,14 @@ on:
     paths:
       - '.profile'
       - '.aliases'
+      - '.functions'
       - 'scripts/test-posix.sh'
   pull_request:
     branches: [ main, master ]
     paths:
       - '.profile'
       - '.aliases'
+      - '.functions'
       - 'scripts/test-posix.sh'
 
 jobs:
@@ -33,9 +35,11 @@ jobs:
         echo "Testing with dash shell..."
         dash -c ". ./.profile && echo '✅ .profile works with dash'"
         dash -c ". ./.aliases && echo '✅ .aliases works with dash'"
+        dash -c ". ./.functions && echo '✅ .functions works with dash'"
     
     - name: Test files with bash
       run: |
         echo "Testing with bash shell..."
         bash -c ". ./.profile && echo '✅ .profile works with bash'"
         bash -c ". ./.aliases && echo '✅ .aliases works with bash'"
+        bash -c ". ./.functions && echo '✅ .functions works with bash'"

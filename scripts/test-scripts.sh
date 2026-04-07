@@ -18,7 +18,7 @@ fi
 echo ""
 
 # Scripts to check
-SCRIPTS="install.sh uninstall.sh"
+SCRIPTS="install.sh uninstall.sh scripts/check-symlinks.sh"
 
 FAILED=0
 for script in $SCRIPTS; do

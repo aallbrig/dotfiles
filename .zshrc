@@ -1,6 +1,7 @@
 # Load POSIX-compliant shell configuration
 [ -f ~/.profile ] && source ~/.profile
 [ -f ~/.aliases ] && source ~/.aliases
+[ -f ~/.functions ] && source ~/.functions
 
 # If you come from bash you might have to change your $PATH.
 export ZSH=$HOME/.oh-my-zsh

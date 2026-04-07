@@ -1,0 +1,17 @@
+# .functions - POSIX-compliant shell functions
+# Can be sourced by any POSIX shell (sh, bash, zsh, dash)
+
+# Create a directory and cd into it
+mkcd() { mkdir -p "$1" && cd "$1" || return; }
+
+# Source optional untracked/work function files if they exist
+# shellcheck disable=SC1090
+[ -f ~/.functions_untracked ] && . ~/.functions_untracked
+# shellcheck disable=SC1090
+[ -f ~/.functions-untracked ] && . ~/.functions-untracked
+# shellcheck disable=SC1090
+[ -f ~/.functions_work ] && . ~/.functions_work
+# shellcheck disable=SC1090
+[ -f ~/.functions-work ] && . ~/.functions-work
+
+: # ensure clean exit status when optional files are absent

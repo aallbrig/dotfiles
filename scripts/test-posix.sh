@@ -8,7 +8,7 @@ echo "🧪 Testing POSIX compliance of dotfiles..."
 echo ""
 
 # Files to check for POSIX compliance
-POSIX_FILES=".profile .aliases"
+POSIX_FILES=".profile .aliases .functions"
 
 # Check if shellcheck is installed
 if ! command -v shellcheck >/dev/null 2>&1; then

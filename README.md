@@ -17,7 +17,8 @@ This repository uses a shell-agnostic approach for portability:
 
 - **`.profile`** - POSIX-compliant environment variables (PATH, EDITOR, etc.)
 - **`.aliases`** - POSIX-compliant aliases (works in sh, bash, zsh, dash)
-- **`.zshrc`** - Zsh-specific configuration (sources `.profile` and `.aliases`)
+- **`.functions`** - POSIX-compliant shell functions (works in sh, bash, zsh, dash). Optionally sources `~/.functions_untracked`, `~/.functions-untracked`, `~/.functions_work`, `~/.functions-work` if present.
+- **`.zshrc`** - Zsh-specific configuration (sources `.profile`, `.aliases`, and `.functions`)
 - Other dotfiles: `.gitconfig`, `.tmux.conf`, `.vimrc`, etc.
 
 ## Testing
