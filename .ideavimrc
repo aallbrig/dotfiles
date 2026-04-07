@@ -1,0 +1,7 @@
+" inspired by gd in vim
+" Go to Type Declaration
+nnoremap gt :action GotoTypeDeclaration<CR>
+nnoremap gi :action GotoImplementation<CR>
+nnoremap gu :action FindUsages<CR>
+nnoremap gs :action FileStructurePopup<CR>
+" /inspired by gd in vim
