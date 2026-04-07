@@ -100,6 +100,13 @@ main() {
 	  ln -s $(pwd)/.vimrc ~/.vimrc
 	fi
 
+	if [[ ! -L ~/.ideavimrc ]] ; then
+	  echo "🪓 Clearing non symbolic link .ideavimrc (if exists)"
+	  mv ~/.ideavimrc ~/.ideavimrc.old 2>/dev/null || true
+	  echo "🪱 Symlinking .ideavimrc"
+	  ln -s $(pwd)/.ideavimrc ~/.ideavimrc
+	fi
+
 	if [ "$(uname)" = "Darwin" ]; then
 		setup_osx
 	fi
