@@ -33,3 +33,5 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # NVM directory (declare here, initialization happens in shell-specific rc)
 export NVM_DIR="$HOME/.nvm"
+
+[ -f ~/.profile_tracked ] && . ~/.profile_tracked || [ -f ~/.profile_untracked ] && . ~/.profile_untracked
