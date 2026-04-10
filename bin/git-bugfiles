@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+# git-bugfiles — Show files with the most bug fixes
+# Displays useful statistics: total files, mean fixes, top N files, and Pareto analysis
+
+set -uo pipefail
+
+# Get all bug-related file changes
+result=$(git log -i -E --grep='fix|bug|broken' --name-only --format='' | grep -v '^$' | sort | uniq -c | sort -nr)
+
+if [[ -z "$result" ]]; then
+  echo "No bug-related commits found"
+  exit 0
+fi
+
+# Convert to array of counts only for calculations
+mapfile -t lines <<<"$result"
+total_files=${#lines[@]}
+
+# Extract counts (first column) for stats calculations
+counts=()
+while IFS= read -r line; do
+  count=$(echo "$line" | awk '{print $1}')
+  counts+=("$count")
+done <<<"$result"
+
+# Calculate statistics
+total_fixes=0
+min_fixes=${counts[0]}
+max_fixes=${counts[0]}
+
+for count in "${counts[@]}"; do
+  total_fixes=$((total_fixes + count))
+  (( count < min_fixes )) && min_fixes=$count
+  (( count > max_fixes )) && max_fixes=$count
+done
+
+mean_fixes=$(( total_fixes / total_files ))
+
+# Calculate median (simple approach: sort and find middle)
+sorted_counts=($(printf '%s\n' "${counts[@]}" | sort -n))
+mid=$(( (total_files - 1) / 2 ))
+if (( total_files % 2 == 0 )); then
+  median=$(( (sorted_counts[mid] + sorted_counts[mid+1]) / 2 ))
+else
+  median=${sorted_counts[mid]}
+fi
+
+# Calculate variance and standard deviation
+variance_sum=0
+for count in "${counts[@]}"; do
+  diff=$(( count - mean_fixes ))
+  variance_sum=$(( variance_sum + (diff * diff) ))
+done
+variance=$(( variance_sum / total_files ))
+stddev=$(echo "sqrt($variance)" | bc 2>/dev/null || echo "N/A")
+
+# Print header with stats
+echo "🐛 Bug Fixes Analysis (All time)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Total files with bug fixes: $total_files"
+echo "Total fix count: $total_fixes"
+echo "Mean fixes per file: $mean_fixes"
+echo "Median fixes per file: $median"
+echo "Min fixes: $min_fixes | Max fixes: $max_fixes"
+echo "Std Dev: $stddev"
+echo ""
+
+# Calculate and show top N percentage
+limit=${1:-20}
+top_count=0
+top_index=0
+
+for count in "${counts[@]}"; do
+  (( top_index >= limit )) && break
+  top_count=$((top_count + count))
+  (( top_index++ ))
+done
+
+if (( total_fixes > 0 )); then
+  percentage=$(( (top_count * 100) / total_fixes ))
+  echo "Top $limit files account for $top_count fixes ($percentage% of total)"
+else
+  percentage=0
+fi
+
+echo ""
+echo "🔥 Top $limit Most Fixed Files (Problem Children):"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "$result" | head -n "$limit"

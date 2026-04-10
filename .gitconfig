@@ -56,6 +56,16 @@
       echo 'Not running this command on the default branch'; \
     fi \
   "
+  churn = !git-churn
+  hotfiles = churn
+  contrib = shortlog -sn --no-merges
+  authors = contrib
+  bugfiles = !git-bugfiles
+  bugmap = bugfiles
+  velocity = !git log --format='%ad' --date=format:'%Y-%m' | sort | uniq -c
+  timeline = velocity
+  fires = !git log --oneline --since=\"1 year ago\" | grep -iE 'revert|hotfix|emergency|rollback'
+  incidents = fires
   full-delete-current-branch = "! \
     current_branch=$(git branch-name); \
     default_branch=$(git default-branch); \

@@ -114,6 +114,16 @@ main() {
 	  ln -s $(pwd)/.ideavimrc ~/.ideavimrc
 	fi
 
+	if [[ ! -L ~/bin/git-churn ]] ; then
+	  echo "🪱 Symlinking git-churn script"
+	  ln -s $(pwd)/bin/git-churn ~/bin/git-churn
+	fi
+
+	if [[ ! -L ~/bin/git-bugfiles ]] ; then
+	  echo "🪱 Symlinking git-bugfiles script"
+	  ln -s $(pwd)/bin/git-bugfiles ~/bin/git-bugfiles
+	fi
+
 	if [ "$(uname)" = "Darwin" ]; then
 		setup_osx
 	fi

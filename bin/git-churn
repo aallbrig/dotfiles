@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+# git-churn — Show files with the most changes in the last year
+# Displays useful statistics: total files, mean churn, top N files, and Pareto analysis
+
+set -uo pipefail
+
+# Get all file changes from the last year
+result=$(git log --format=format: --name-only --since='1 year ago' | grep -v '^$' | sort | uniq -c | sort -nr)
+
+if [[ -z "$result" ]]; then
+  echo "No commits found in the last year"
+  exit 0
+fi
+
+# Convert to array of counts only for calculations
+mapfile -t lines <<<"$result"
+total_files=${#lines[@]}
+
+# Extract counts (first column) for stats calculations
+counts=()
+while IFS= read -r line; do
+  count=$(echo "$line" | awk '{print $1}')
+  counts+=("$count")
+done <<<"$result"
+
+# Calculate statistics
+total_churn=0
+min_churn=${counts[0]}
+max_churn=${counts[0]}
+
+for count in "${counts[@]}"; do
+  total_churn=$((total_churn + count))
+  (( count < min_churn )) && min_churn=$count
+  (( count > max_churn )) && max_churn=$count
+done
+
+mean_churn=$(( total_churn / total_files ))
+
+# Calculate median (simple approach: sort and find middle)
+sorted_counts=($(printf '%s\n' "${counts[@]}" | sort -n))
+mid=$(( (total_files - 1) / 2 ))
+if (( total_files % 2 == 0 )); then
+  median=$(( (sorted_counts[mid] + sorted_counts[mid+1]) / 2 ))
+else
+  median=${sorted_counts[mid]}
+fi
+
+# Calculate variance and standard deviation
+variance_sum=0
+for count in "${counts[@]}"; do
+  diff=$(( count - mean_churn ))
+  variance_sum=$(( variance_sum + (diff * diff) ))
+done
+variance=$(( variance_sum / total_files ))
+stddev=$(echo "sqrt($variance)" | bc 2>/dev/null || echo "N/A")
+
+# Print header with stats
+echo "📊 Churn Analysis (Last 12 months)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Total files with changes: $total_files"
+echo "Total change count: $total_churn"
+echo "Mean churn: $mean_churn"
+echo "Median churn: $median"
+echo "Min churn: $min_churn | Max churn: $max_churn"
+echo "Std Dev: $stddev"
+echo ""
+
+# Calculate and show top N percentage
+limit=${1:-20}
+top_count=0
+top_index=0
+
+for count in "${counts[@]}"; do
+  (( top_index >= limit )) && break
+  top_count=$((top_count + count))
+  (( top_index++ ))
+done
+
+if (( total_churn > 0 )); then
+  percentage=$(( (top_count * 100) / total_churn ))
+  echo "Top $limit files account for $top_count changes ($percentage% of total)"
+else
+  percentage=0
+fi
+
+echo ""
+echo "🔥 Top $limit Most Churned Files:"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "$result" | head -n "$limit"
