@@ -35,4 +35,8 @@ export PATH="$HOME/.local/bin:$PATH"
 export NVM_DIR="$HOME/.nvm"
 
 # shellcheck source=/dev/null
-[ -f ~/.profile_tracked ] && . ~/.profile_tracked || [ -f ~/.profile_untracked ] && . ~/.profile_untracked
+if [ -f ~/.profile_tracked ]; then
+    . ~/.profile_tracked
+elif [ -f ~/.profile_untracked ]; then
+    . ~/.profile_untracked
+fi
