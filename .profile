@@ -21,8 +21,8 @@ GOBIN_PATH=$(go env GOPATH 2>/dev/null || echo "$HOME/go")/bin
 
 # PATH modifications
 export PATH="/usr/local/go/bin:$PATH"
-export PATH="$HOME/go/bin:$PATH"
 export PATH="$PATH:$GOBIN_PATH"
+export PATH="$HOME/go/bin:$PATH"
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/opt:$PATH"
 export PATH="$HOME/bin:$PATH"

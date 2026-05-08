@@ -26,7 +26,7 @@ zsh_shell_setup() {
 				sudo apt install -y zsh
 			fi
 			echo "Setting default shell to zsh"
-			chsh -s $(which zsh)
+			chsh -s "$(which zsh)"
 		fi
 	fi
 
@@ -41,28 +41,28 @@ zsh_shell_setup() {
 	  echo "🪓 Clearing non symbolic link .profile (if exists)"
 	  mv ~/.profile ~/.profile.old 2>/dev/null || true
 	  echo "🪱 Symlinking .profile"
-	  ln -s $(pwd)/.profile ~/.profile
+	  ln -s "$(pwd)/.profile" ~/.profile
 	fi
 
 	if [[ ! -L ~/.aliases ]] ; then
 	  echo "🪓 Clearing non symbolic link .aliases (if exists)"
 	  mv ~/.aliases ~/.aliases.old 2>/dev/null || true
 	  echo "🪱 Symlinking .aliases"
-	  ln -s $(pwd)/.aliases ~/.aliases
+	  ln -s "$(pwd)/.aliases" ~/.aliases
 	fi
 
 	if [[ ! -L ~/.functions ]] ; then
 	  echo "🪓 Clearing non symbolic link .functions (if exists)"
 	  mv ~/.functions ~/.functions.old 2>/dev/null || true
 	  echo "🪱 Symlinking .functions"
-	  ln -s $(pwd)/.functions ~/.functions
+	  ln -s "$(pwd)/.functions" ~/.functions
 	fi
 
 	if [[ ! -L ~/.zshrc ]] ; then
 	  echo "🪓 Clearing non symbolic link shell profile"
 	  mv ~/.zshrc ~/.zshrc.old
 	  echo "🪱 Symlinking shell profile"
-	  ln -s $(pwd)/.zshrc ~/.zshrc
+	  ln -s "$(pwd)/.zshrc" ~/.zshrc
 	fi
 }
 
@@ -78,14 +78,14 @@ main() {
 	  echo "🪓 Clearing non symbolic link .gitconfig (if exists)"
 	  mv ~/.gitconfig ~/.gitconfig.old
 	  echo "🪱 Symlinking .gitconfig"
-	  ln -s $(pwd)/.gitconfig ~/.gitconfig
+	  ln -s "$(pwd)/.gitconfig" ~/.gitconfig
 	fi
 
 	if [[ ! -L ~/.tmux.conf ]] ; then
 	  echo "🪓 Clearing non symbolic link .tmux.conf (if exists)"
 	  mv ~/.tmux.conf ~/.tmux.conf.old
 	  echo "🪱 Symlinking .tmux.conf"
-	  ln -s $(pwd)/.tmux.conf ~/.tmux.conf
+	  ln -s "$(pwd)/.tmux.conf" ~/.tmux.conf
 	fi
 
 	if [[ ! -d ~/.ssh ]] ; then
@@ -97,31 +97,31 @@ main() {
 	  echo "🪓 Clearing non symbolic link .ssh/config (if exists)"
 	  mv ~/.ssh/config ~/.ssh/config.old
 	  echo "🪱 Symlinking .ssh/config"
-	  ln -s $(pwd)/ssh/config ~/.ssh/config
+	  ln -s "$(pwd)/ssh/config" ~/.ssh/config
 	fi
 
 	if [[ ! -L ~/.vimrc ]] ; then
 	  echo "🪓 Clearing non symbolic link .vimrc (if exists)"
 	  mv ~/.vimrc ~/.vimrc.old
 	  echo "🪱 Symlinking .vimrc"
-	  ln -s $(pwd)/.vimrc ~/.vimrc
+	  ln -s "$(pwd)/.vimrc" ~/.vimrc
 	fi
 
 	if [[ ! -L ~/.ideavimrc ]] ; then
 	  echo "🪓 Clearing non symbolic link .ideavimrc (if exists)"
 	  mv ~/.ideavimrc ~/.ideavimrc.old 2>/dev/null || true
 	  echo "🪱 Symlinking .ideavimrc"
-	  ln -s $(pwd)/.ideavimrc ~/.ideavimrc
+	  ln -s "$(pwd)/.ideavimrc" ~/.ideavimrc
 	fi
 
 	if [[ ! -L ~/bin/git-churn ]] ; then
 	  echo "🪱 Symlinking git-churn script"
-	  ln -s $(pwd)/bin/git-churn ~/bin/git-churn
+	  ln -s "$(pwd)/bin/git-churn" ~/bin/git-churn
 	fi
 
 	if [[ ! -L ~/bin/git-bugfiles ]] ; then
 	  echo "🪱 Symlinking git-bugfiles script"
-	  ln -s $(pwd)/bin/git-bugfiles ~/bin/git-bugfiles
+	  ln -s "$(pwd)/bin/git-bugfiles" ~/bin/git-bugfiles
 	fi
 
 	if [ "$(uname)" = "Darwin" ]; then

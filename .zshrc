@@ -119,3 +119,7 @@ autoload -Uz compinit && compinit
 # peon-ping quick controls
 alias peon="bash $HOME/.claude/hooks/peon-ping/peon.sh"
 [ -f $HOME/.claude/hooks/peon-ping/completions.bash ] && source $HOME/.claude/hooks/peon-ping/completions.bash
+export PATH="$HOME/.local/bin:$PATH"
+
+# opencode
+export PATH=/home/aallbright/.opencode/bin:$PATH

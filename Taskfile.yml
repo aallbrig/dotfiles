@@ -1,0 +1,10 @@
+version: '3'
+
+tasks:
+  lint:
+    cmds:
+      - task lint-shell
+
+  lint-shell:
+    cmds:
+      - shellcheck --severity=warning install.sh uninstall.sh scripts/check-symlinks.sh
