@@ -123,3 +123,5 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # opencode
 export PATH=/home/aallbright/.opencode/bin:$PATH
+eval "$(rbenv init - zsh)"
+eval "$(~/.local/bin/mise activate zsh)"

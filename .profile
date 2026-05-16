@@ -30,6 +30,7 @@ export PATH="${PATH}:$HOME/Library/Python/3.9/lib/python/site-packages"
 export PATH="${PATH}:/Users/${USER}/Library/Application Support/JetBrains/Toolbox/scripts"
 export PATH="$HOME/.amplify/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.rbenv/bin:$PATH"
 
 # NVM directory (declare here, initialization happens in shell-specific rc)
 export NVM_DIR="$HOME/.nvm"

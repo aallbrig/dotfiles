@@ -1,10 +1,57 @@
 version: '3'
 
 tasks:
-  lint:
+  # --- Secrets ---
+  secrets-staged:
+    desc: Scan staged files for leaked secrets (pre-commit)
     cmds:
-      - task lint-shell
+      - gitleaks git --staged
+
+  secrets-history:
+    desc: Scan full git history for leaked secrets
+    cmds:
+      - gitleaks git
+
+  # --- Linting ---
+  lint:
+    desc: Run all linters
+    cmds:
+      - task: lint-shell
 
   lint-shell:
+    desc: Shellcheck install/uninstall/check-symlinks scripts
     cmds:
       - shellcheck --severity=warning install.sh uninstall.sh scripts/check-symlinks.sh
+
+  # --- CI tasks (runnable locally) ---
+  test-zshrc:
+    desc: Test .zshrc syntax and structure
+    cmds:
+      - ./scripts/test-zshrc.sh
+
+  test-scripts:
+    desc: Test install/uninstall scripts
+    cmds:
+      - ./scripts/test-scripts.sh
+
+  test-posix:
+    desc: Run POSIX compliance checks on .profile/.aliases/.functions
+    cmds:
+      - ./scripts/test-posix.sh
+
+  test-vim:
+    desc: Test .vimrc
+    cmds:
+      - ./scripts/test-vim.sh
+
+  test-gitconfig:
+    desc: Test .gitconfig
+    cmds:
+      - ./scripts/test-gitconfig.sh
+
+  # --- Pre-commit (composite) ---
+  precommit:
+    desc: Run all pre-commit checks (secrets scan + shell lint)
+    cmds:
+      - task: secrets-staged
+      - task: lint-shell
