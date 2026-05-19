@@ -19,9 +19,14 @@ tasks:
       - task: lint-shell
 
   lint-shell:
-    desc: Shellcheck install/uninstall/check-symlinks scripts
+    desc: Shellcheck all shell scripts in the repo
     cmds:
-      - shellcheck --severity=warning install.sh uninstall.sh scripts/check-symlinks.sh
+      - ./scripts/lint-shell.sh
+
+  lint-shell-staged:
+    desc: Shellcheck only shell scripts staged for commit
+    cmds:
+      - ./scripts/lint-shell-staged.sh
 
   # --- CI tasks (runnable locally) ---
   test-zshrc:
@@ -49,9 +54,15 @@ tasks:
     cmds:
       - ./scripts/test-gitconfig.sh
 
+  test-tmux:
+    desc: Validate .tmux.conf syntax and config load
+    cmds:
+      - ./scripts/test-tmux.sh
+
   # --- Pre-commit (composite) ---
   precommit:
-    desc: Run all pre-commit checks (secrets scan + shell lint)
+    desc: Run all pre-commit checks (secrets scan + staged shell lint + tmux config)
     cmds:
       - task: secrets-staged
-      - task: lint-shell
+      - task: lint-shell-staged
+      - task: test-tmux

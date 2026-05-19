@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 setup_osx() {
+	# shellcheck source=/dev/null
 	source ./.macos
 
 	if ! which brew &> /dev/null ; then
