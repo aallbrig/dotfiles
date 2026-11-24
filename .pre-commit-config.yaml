@@ -1,5 +1,158 @@
+# Single source of truth for repo quality gates.
+# Installed by ./install.sh (pre-commit, commit-msg, pre-push stages).
+# Run everything: `task ci`  |  update pinned revs: `task hooks:update`
+default_install_hook_types: [pre-commit, commit-msg, pre-push]
+default_stages: [pre-commit, manual]
+exclude: ^unity_profiles/
+
 repos:
+  # --- Hygiene ---
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: check-yaml
+      - id: check-json
+      - id: detect-private-key
+
+  - repo: meta
+    hooks:
+      - id: check-hooks-apply
+      - id: check-useless-excludes
+
+  # --- Secrets ---
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.21.2
+    rev: v8.30.0
     hooks:
       - id: gitleaks
+
+  # --- Shell ---
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1-1
+    hooks:
+      - id: shellcheck
+        name: shellcheck (scripts + dotfiles)
+        # shebang-detected scripts plus extensionless dotfiles
+        types_or: [shell]
+        files: (^|/)(\.profile|\.aliases|\.functions|\.bashrc|\.bash_profile|\.macos)$|\.sh$|^bin/
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.14.1-1
+    hooks:
+      - id: shfmt # reads .editorconfig
+        files: (^|/)(\.profile|\.aliases|\.functions|\.bashrc|\.bash_profile|\.macos)$|\.sh$|^bin/
+
+  # --- GitHub Actions ---
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.12
+    hooks:
+      - id: actionlint
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.33.1
+    hooks:
+      - id: zizmor
+
+  # --- YAML / JSON schemas / Markdown ---
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.38.0
+    hooks:
+      - id: yamllint
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.39.0
+    hooks:
+      - id: check-github-workflows
+      - id: check-dependabot
+      - id: check-taskfile
+      - id: check-jsonschema
+        name: check release-please config
+        files: ^release-please-config\.json$
+        args: [--schemafile, "https://raw.githubusercontent.com/googleapis/release-please/v17.11.2/schemas/config.json"]
+      - id: check-jsonschema
+        name: check Copilot hooks
+        files: ^\.github/hooks/.*\.json$
+        args: [--schemafile, schemas/copilot-hooks.schema.json]
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.24.2
+    hooks:
+      - id: markdownlint-cli2
+
+  # --- Commit messages (release-please needs Conventional Commits) ---
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.5.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+
+  # --- Repo-specific checks ---
+  - repo: local
+    hooks:
+      - id: no-hardcoded-home
+        name: no hard-coded home directories
+        entry: scripts/hooks/no-hardcoded-home.sh
+        language: script
+        types: [text]
+        exclude: ^(README\.md|CHANGELOG\.md|scripts/hooks/no-hardcoded-home\.sh)$
+      - id: posix-syntax
+        name: POSIX syntax (sh/dash -n)
+        entry: scripts/hooks/posix-syntax.sh
+        language: script
+        files: ^(\.profile|\.aliases|\.functions|scripts/.*\.sh)$
+      - id: zsh-syntax
+        name: zsh syntax (zsh -n)
+        entry: zsh -n
+        language: system
+        files: ^\.zshrc$
+      - id: bash-syntax
+        name: bash syntax (bash -n)
+        entry: bash -n
+        language: system
+        files: ^(\.bashrc|\.bash_profile|\.macos|install\.sh|uninstall\.sh|bin/.*)$
+      - id: ssh-config
+        name: ssh config parses, no duplicate Host blocks
+        entry: scripts/hooks/check-ssh-config.sh
+        language: script
+        files: ^ssh/config$
+      - id: gitconfig
+        name: gitconfig parses
+        entry: scripts/test-gitconfig.sh
+        language: script
+        pass_filenames: false
+        files: ^\.gitconfig$
+      - id: tmux-conf
+        name: tmux config loads
+        entry: scripts/test-tmux.sh
+        language: script
+        pass_filenames: false
+        files: ^\.tmux\.conf$
+      - id: vimrc
+        name: vimrc loads
+        entry: scripts/test-vim.sh
+        language: script
+        pass_filenames: false
+        files: ^\.(vimrc|ideavimrc)$
+      - id: brewfile
+        name: Brewfile is valid Ruby
+        entry: ruby -c
+        language: system
+        files: ^Brewfile$
+      - id: symlink-manifest
+        name: symlinks.txt sources exist
+        entry: scripts/test-scripts.sh
+        language: script
+        pass_filenames: false
+        files: ^(symlinks\.txt|install\.sh|uninstall\.sh|scripts/check-symlinks\.sh)$
+      - id: shell-startup
+        name: interactive zsh/bash start without errors
+        entry: scripts/test-startup.sh
+        language: script
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push, manual]

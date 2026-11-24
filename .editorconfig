@@ -1,0 +1,25 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# Shell: shfmt reads these settings. (A glob containing "/" is anchored to
+# the repo root, so keep bin/* in its own section.)
+[{*.sh,.profile,.aliases,.functions,.bashrc,.bash_profile,.macos}]
+indent_size = 4
+switch_case_indent = true
+
+[bin/*]
+indent_size = 4
+switch_case_indent = true
+
+[Makefile]
+indent_style = tab
+
+[*.md]
+trim_trailing_whitespace = false
