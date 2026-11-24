@@ -41,13 +41,15 @@ repos:
     hooks:
       - id: shellcheck
         name: shellcheck (scripts + dotfiles)
-        # shebang-detected scripts plus extensionless dotfiles
-        types_or: [shell]
+        # explicit list: .aliases/.functions have no shebang, so identify
+        # doesn't tag them `shell`; override the hook's default type filter
+        types: [text]
         files: (^|/)(\.profile|\.aliases|\.functions|\.bashrc|\.bash_profile|\.macos)$|\.sh$|^bin/
   - repo: https://github.com/scop/pre-commit-shfmt
     rev: v3.14.1-1
     hooks:
       - id: shfmt # reads .editorconfig
+        types: [text]
         files: (^|/)(\.profile|\.aliases|\.functions|\.bashrc|\.bash_profile|\.macos)$|\.sh$|^bin/
 
   # --- GitHub Actions ---

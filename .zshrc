@@ -59,29 +59,52 @@ plugins=(git nvm)
 # but don't ship them into Homebrew's site-functions. Files are written to
 # oh-my-zsh's cache completions dir (already on fpath) and only regenerated
 # when missing or older than the tool's binary, keeping startup fast.
-ZSH_CACHE_DIR="${ZSH_CACHE_DIR:-$ZSH/cache}"
-mkdir -p "$ZSH_CACHE_DIR/completions"
-_cache_completion() { # usage: _cache_completion <command> <generator args...>
-  local name=$1; shift
-  local bin out
-  bin=$(command -v "$name") || return 0
-  out="$ZSH_CACHE_DIR/completions/_$name"
-  [[ -s $out && $out -nt $bin ]] || "$@" >| "$out" 2>/dev/null
+#
+# _gen_completion writes atomically and keeps output only if the generator
+# succeeded and produced something, so a failed or interrupted run can't
+# leave a broken file that gets loaded on every start.
+_gen_completion() { # usage: _gen_completion <outfile> <command> <generator args...>
+  local out=$1 name=$2; shift 2
+  local bin tmp
+  bin=$(command -v "$name") || return 1
+  [[ -s $out && $out -nt $bin ]] && return 0
+  tmp="$out.tmp.$$"
+  if "$@" >| "$tmp" 2>/dev/null && [[ -s $tmp ]]; then
+    mv -f "$tmp" "$out"
+  else
+    rm -f "$tmp"
+    [[ -s $out ]]
+  fi
 }
-_cache_completion uv uv generate-shell-completion zsh
-_cache_completion uvx uvx --generate-shell-completion zsh
-_cache_completion k9s k9s completion zsh
-_cache_completion goreleaser goreleaser completion zsh
-_cache_completion syft syft completion zsh
-_cache_completion stripe stripe completion --shell zsh --write-to-stdout
-unfunction _cache_completion
+_cache_completion() { _gen_completion "$ZSH_CACHE_DIR/completions/_$1" "$@"; }
 
-source $ZSH/oh-my-zsh.sh
+if [[ -f $ZSH/oh-my-zsh.sh ]]; then
+  ZSH_CACHE_DIR="${ZSH_CACHE_DIR:-$ZSH/cache}"
+  mkdir -p "$ZSH_CACHE_DIR/completions"
+  _cache_completion uv uv generate-shell-completion zsh
+  _cache_completion uvx uvx --generate-shell-completion zsh
+  _cache_completion k9s k9s completion zsh
+  _cache_completion goreleaser goreleaser completion zsh
+  _cache_completion syft syft completion zsh
+  _cache_completion stripe stripe completion --shell zsh --write-to-stdout
+  unfunction _cache_completion
+
+  source $ZSH/oh-my-zsh.sh
+else
+  # oh-my-zsh not installed yet (e.g. after `install.sh --links-only`).
+  # Don't create ~/.oh-my-zsh here: install.sh skips installing it if it exists.
+  print -u2 "dotfiles: oh-my-zsh not found at $ZSH; run ./install.sh"
+  ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+  mkdir -p "$ZSH_CACHE_DIR/completions"
+  fpath=("$ZSH_CACHE_DIR/completions" $fpath)
+  autoload -Uz compinit && compinit
+  unfunction _cache_completion
+fi
 
 # Zsh-specific configuration below
 # (Environment variables, PATH and aliases are in ~/.profile and ~/.aliases)
 
-# Generators for languages are in various
+# List gen::* generator functions defined in ~/.*-shellrc files
 function available_generator_functions() {
   cat $HOME/.*-shellrc | grep '^\w*function gen::.*()' | sed -e 's/function //g' -e 's/() {//g'
 }
@@ -120,16 +143,12 @@ command -v aws_completer >/dev/null 2>&1 && complete -C "$(command -v aws_comple
 command -v terraform >/dev/null 2>&1 && complete -o nospace -C "$(command -v terraform)" terraform
 # Bash-style generators (cached like the fpath ones above; sourced after bashcompinit)
 _source_cached_completion() { # usage: _source_cached_completion <command> <generator args...>
-  local name=$1; shift
-  local bin out
-  bin=$(command -v "$name") || return 0
-  out="$ZSH_CACHE_DIR/completions/$name.zsh"
-  [[ -s $out && $out -nt $bin ]] || SHELL=zsh "$@" >| "$out" 2>/dev/null
-  source "$out"
+  local out="$ZSH_CACHE_DIR/completions/$1.zsh"
+  SHELL=zsh _gen_completion "$out" "$@" && source "$out"
 }
 _source_cached_completion opencode opencode completion
 _source_cached_completion npm npm completion
-unfunction _source_cached_completion
+unfunction _source_cached_completion _gen_completion
 
 # peon-ping quick controls
 alias peon="bash $HOME/.claude/hooks/peon-ping/peon.sh"

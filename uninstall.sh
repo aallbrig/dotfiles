@@ -3,7 +3,9 @@
 # point into this repo). Restores <file>.old backups made by install.sh.
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+
+tilde() { if [[ "$1" == "$HOME"/* ]]; then echo "~${1#"$HOME"}"; else echo "$1"; fi; }
 
 echo "🦉 Uninstall script"
 
@@ -11,11 +13,11 @@ while read -r src dest; do
     case "$src" in '' | '#'*) continue ;; esac
     src="$REPO_ROOT/$src"
     dest="$HOME/$dest"
-    if [[ -L "$dest" && "$(readlink "$dest")" = "$src" ]]; then
-        echo "🪓 Deleting ${dest/#"$HOME"/\~}"
+    if [[ -L "$dest" && "$dest" -ef "$src" ]]; then
+        echo "🪓 Deleting $(tilde "$dest")"
         rm "$dest"
         if [[ -e "$dest.old" ]]; then
-            echo "♻️  Restoring ${dest/#"$HOME"/\~}.old"
+            echo "♻️  Restoring $(tilde "$dest").old"
             mv "$dest.old" "$dest"
         fi
     fi

@@ -4,7 +4,7 @@
 # Homebrew packages, macOS defaults and git hooks.
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 LINKS_ONLY="${DOTFILES_LINKS_ONLY:-0}"
 for arg in "$@"; do
     case "$arg" in
@@ -21,13 +21,19 @@ for arg in "$@"; do
 done
 
 setup_osx() {
-    # shellcheck source=/dev/null
-    source "$REPO_ROOT/.macos"
+    # Run (not source) so a failing `defaults`/`killall` can't abort the install
+    bash "$REPO_ROOT/.macos" || echo "⚠️  .macos exited non-zero; continuing"
 
     if ! command -v brew &>/dev/null; then
         # source: https://brew.sh/
         echo "📀 Installing homebrew"
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+    # A fresh Homebrew install isn't on this process's PATH yet
+    if ! command -v brew &>/dev/null; then
+        for b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+            if [[ -x "$b" ]]; then eval "$("$b" shellenv)"; fi
+        done
     fi
 
     if ! brew bundle check --no-upgrade --file "$REPO_ROOT/Brewfile" &>/dev/null; then
@@ -57,8 +63,21 @@ zsh_shell_setup() {
     fi
 }
 
+# Display a path with $HOME shown as ~ (portable to bash 3.2)
+tilde() { if [[ "$1" == "$HOME"/* ]]; then echo "~${1#"$HOME"}"; else echo "$1"; fi; }
+
+# A backup name that never overwrites an earlier backup
+backup_path() {
+    local dest=$1
+    if [[ ! -e "$dest.old" && ! -L "$dest.old" ]]; then
+        echo "$dest.old"
+    else
+        echo "$dest.old.$(date +%Y%m%d%H%M%S)"
+    fi
+}
+
 link_dotfiles() {
-    local src dest
+    local src dest backup
     while read -r src dest; do
         case "$src" in '' | '#'*) continue ;; esac
         src="$REPO_ROOT/$src"
@@ -67,13 +86,19 @@ link_dotfiles() {
             continue
         fi
         mkdir -p "$(dirname "$dest")"
-        if [[ -e "$dest" || -L "$dest" ]]; then
-            echo "🪓 Moving existing ${dest/#"$HOME"/\~} to ${dest/#"$HOME"/\~}.old"
-            mv "$dest" "$dest.old"
+        if [[ -L "$dest" && "$dest" -ef "$src" ]]; then
+            # Already points at this file via another path (moved/symlinked
+            # repo): repoint it; there is nothing of the user's to back up.
+            rm "$dest"
+        elif [[ -e "$dest" || -L "$dest" ]]; then
+            backup=$(backup_path "$dest")
+            echo "🪓 Moving existing $(tilde "$dest") to $(tilde "$backup")"
+            mv "$dest" "$backup"
         fi
-        echo "🪱 Symlinking ${dest/#"$HOME"/\~}"
+        echo "🪱 Symlinking $(tilde "$dest")"
         ln -s "$src" "$dest"
     done <"$REPO_ROOT/symlinks.txt"
+    chmod 700 "$HOME/.ssh" 2>/dev/null || true
 }
 
 install_git_hooks() {

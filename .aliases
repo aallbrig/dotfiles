@@ -1,3 +1,4 @@
+# shellcheck shell=sh
 # .aliases - POSIX-compliant aliases
 # Can be sourced by any POSIX shell (sh, bash, zsh, dash)
 
