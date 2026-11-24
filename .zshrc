@@ -55,48 +55,47 @@ ZSH_THEME="lambda"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git nvm)
 
+# Cached completions for tools that generate their own zsh completion scripts
+# but don't ship them into Homebrew's site-functions. Files are written to
+# oh-my-zsh's cache completions dir (already on fpath) and only regenerated
+# when missing or older than the tool's binary, keeping startup fast.
+ZSH_CACHE_DIR="${ZSH_CACHE_DIR:-$ZSH/cache}"
+mkdir -p "$ZSH_CACHE_DIR/completions"
+_cache_completion() { # usage: _cache_completion <command> <generator args...>
+  local name=$1; shift
+  local bin out
+  bin=$(command -v "$name") || return 0
+  out="$ZSH_CACHE_DIR/completions/_$name"
+  [[ -s $out && $out -nt $bin ]] || "$@" >| "$out" 2>/dev/null
+}
+_cache_completion uv uv generate-shell-completion zsh
+_cache_completion uvx uvx --generate-shell-completion zsh
+_cache_completion k9s k9s completion zsh
+_cache_completion goreleaser goreleaser completion zsh
+_cache_completion syft syft completion zsh
+_cache_completion stripe stripe completion --shell zsh --write-to-stdout
+unfunction _cache_completion
+
 source $ZSH/oh-my-zsh.sh
 
-
-# User configuration
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
 # Zsh-specific configuration below
-# (Environment variables and aliases are in ~/.profile and ~/.aliases)
+# (Environment variables, PATH and aliases are in ~/.profile and ~/.aliases)
 
-# Zsh-specific functions
+# Generators for languages are in various
 function available_generator_functions() {
   cat $HOME/.*-shellrc | grep '^\w*function gen::.*()' | sed -e 's/function //g' -e 's/() {//g'
 }
 alias agf='available_generator_functions'
 
-# Zsh autocompletion
-if test -f /usr/local/share/zsh/site-functions/aws_zsh_completer.sh; then
-  source /usr/local/share/zsh/site-functions/aws_zsh_completer.sh
-fi
-source <(kubectl completion zsh)
-complete -F __start_kubectl k # get k8s autocompletion working with "k" alias
-# for aws
-complete -C "$(which aws_completer)" aws
-
-# Additional PATH and environment variables are in ~/.profile
-
 # <3 tmux
 if [ -z "$INTELLIJ_ENVIRONMENT_READER" ]; then
-	if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+	if command -v tmux &> /dev/null && [[ -t 0 ]] && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
 	  exec tmux
 	fi
 fi
 
-
-autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /usr/local/bin/terraform terraform
-
 # ssh-add run without arguments adds in default public keys
-ssh-add
+[ -n "$SSH_AUTH_SOCK" ] && ssh-add -q 2>/dev/null
 
 # I have language specific rc files (e.g. ~/.git-shellrc, ~/.node-shellrc, ~/.go-shellrc) where language specific configuration (and/or generate fns shell fns) exist
 # shellrc_files=$(~/.*-shellrc 2> /dev/null)
@@ -111,17 +110,36 @@ mkdir -p "${NVM_DIR}"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
-# for aws autocompletion
-autoload bashcompinit && bashcompinit
-autoload -Uz compinit && compinit
-# eval "$(gh copilot alias -- zsh)"
+# Zsh autocompletion
+# oh-my-zsh has already run compinit (which picks up Homebrew's
+# site-functions: gh, kubectl, helm, docker, task, brew, ...).
+# bashcompinit enables bash-style `complete` for tools without zsh completers.
+# Aliases (k, g, tf) complete as their targets automatically.
+autoload -U +X bashcompinit && bashcompinit
+command -v aws_completer >/dev/null 2>&1 && complete -C "$(command -v aws_completer)" aws
+command -v terraform >/dev/null 2>&1 && complete -o nospace -C "$(command -v terraform)" terraform
+# Bash-style generators (cached like the fpath ones above; sourced after bashcompinit)
+_source_cached_completion() { # usage: _source_cached_completion <command> <generator args...>
+  local name=$1; shift
+  local bin out
+  bin=$(command -v "$name") || return 0
+  out="$ZSH_CACHE_DIR/completions/$name.zsh"
+  [[ -s $out && $out -nt $bin ]] || SHELL=zsh "$@" >| "$out" 2>/dev/null
+  source "$out"
+}
+_source_cached_completion opencode opencode completion
+_source_cached_completion npm npm completion
+unfunction _source_cached_completion
 
 # peon-ping quick controls
 alias peon="bash $HOME/.claude/hooks/peon-ping/peon.sh"
 [ -f $HOME/.claude/hooks/peon-ping/completions.bash ] && source $HOME/.claude/hooks/peon-ping/completions.bash
-export PATH="$HOME/.local/bin:$PATH"
 
-# opencode
-export PATH=/home/aallbright/.opencode/bin:$PATH
-eval "$(rbenv init - zsh)"
-eval "$(~/.local/bin/mise activate zsh)"
+if command -v rbenv >/dev/null 2>&1; then
+  eval "$(rbenv init - zsh)"
+fi
+if [ -x "$HOME/.local/bin/mise" ]; then
+  eval "$(~/.local/bin/mise activate zsh)"
+fi
+
+[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"

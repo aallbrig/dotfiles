@@ -31,6 +31,8 @@ export PATH="${PATH}:/Users/${USER}/Library/Application Support/JetBrains/Toolbo
 export PATH="$HOME/.amplify/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.rbenv/bin:$PATH"
+export PATH="$HOME/.opencode/bin:$PATH"
+export PATH="$HOME/.stripe/bin:$PATH"
 
 # NVM directory (declare here, initialization happens in shell-specific rc)
 export NVM_DIR="$HOME/.nvm"
