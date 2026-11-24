@@ -28,7 +28,7 @@ for file in $POSIX_FILES; do
         echo "⚠️  File not found: $file"
         continue
     fi
-    
+
     echo "📋 Checking $file for POSIX compliance..."
     # Use dash shell (pure POSIX) to check for syntax errors
     if sh -n "$file" 2>/dev/null; then
@@ -38,7 +38,7 @@ for file in $POSIX_FILES; do
         sh -n "$file"
         FAILED=1
     fi
-    
+
     # Use shellcheck with POSIX shell specification
     if shellcheck --shell=sh --severity=warning "$file"; then
         echo "   ✅ shellcheck passed"

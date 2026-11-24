@@ -13,7 +13,7 @@ projects grows.
 
 ## Proposed interface
 
-```
+```text
 # Show ports claimed by my projects (default: filter by git user)
 src-ports
 

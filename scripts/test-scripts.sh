@@ -29,20 +29,20 @@ while read -r src _dest; do
         echo "❌ symlinks.txt lists missing file: $src"
         FAILED=1
     fi
-done < symlinks.txt
+done <symlinks.txt
 
 for script in $SCRIPTS; do
     if [ ! -f "$script" ]; then
         echo "⚠️  File not found: $script"
         continue
     fi
-    
+
     echo "📋 Checking $script..."
-    
+
     # Basic syntax check with the interpreter named in the shebang
     case "$(head -n 1 "$script")" in
         *bash*) interp=bash ;;
-        *) interp=sh ;;
+        *) interp='sh' ;;
     esac
     if "$interp" -n "$script" 2>/dev/null; then
         echo "   ✅ Syntax check passed"
@@ -51,7 +51,7 @@ for script in $SCRIPTS; do
         "$interp" -n "$script"
         FAILED=1
     fi
-    
+
     # Shellcheck if available
     if [ $SHELLCHECK_AVAILABLE -eq 1 ]; then
         if shellcheck --severity=warning "$script"; then
@@ -61,7 +61,7 @@ for script in $SCRIPTS; do
             FAILED=1
         fi
     fi
-    
+
     echo ""
 done
 
