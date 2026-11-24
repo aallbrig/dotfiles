@@ -1,13 +1,15 @@
+# Personal GitHub identity (default)
 Host github.com
     HostName github.com
     PreferredAuthentications publickey
-    IdentityFile ~/.ssh/ssh-ed25519
+    IdentityFile ~/.ssh/id_ed25519
 
-# General Purpose Work GitHub Identity Reference
-Host github.com
+# Work GitHub identity: clone with git@github.com-work:org/repo.git
+Host github.com-work
     HostName github.com
     PreferredAuthentications publickey
     IdentityFile ~/.ssh/id_rsa_work
+    IdentitiesOnly yes
 
 Host *amazonaws.com
     IdentityFile ~/.ssh/andrew-allbright-keypair.pem
@@ -15,4 +17,4 @@ Host *amazonaws.com
 
 Host *
     AddKeysToAgent yes
-    IdentityFile ~/.ssh/ssh-ed25519
+    IdentityFile ~/.ssh/id_ed25519
