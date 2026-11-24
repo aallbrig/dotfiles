@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/aallbrig/dotfiles/compare/v1.0.0...v1.0.1) (2026-11-24)
+
+
+### CI & Quality Gates
+
+* treat every lint warning as an error ([#4](https://github.com/aallbrig/dotfiles/issues/4)) ([468d218](https://github.com/aallbrig/dotfiles/commit/468d2183322d01cd51ab07e5da2853cf3ca463eb))
+
 ## 1.0.0 (2026-11-24)
 
 
