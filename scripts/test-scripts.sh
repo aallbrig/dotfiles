@@ -54,7 +54,7 @@ for script in $SCRIPTS; do
 
     # Shellcheck if available
     if [ $SHELLCHECK_AVAILABLE -eq 1 ]; then
-        if shellcheck --severity=warning "$script"; then
+        if shellcheck --severity=style "$script"; then
             echo "   ✅ shellcheck passed"
         else
             echo "   ❌ shellcheck found issues"

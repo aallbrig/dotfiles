@@ -40,7 +40,7 @@ for file in $POSIX_FILES; do
     fi
 
     # Use shellcheck with POSIX shell specification
-    if shellcheck --shell=sh --severity=warning "$file"; then
+    if shellcheck --shell=sh --severity=style "$file"; then
         echo "   ✅ shellcheck passed"
     else
         echo "   ❌ shellcheck found issues"

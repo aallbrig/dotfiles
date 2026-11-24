@@ -29,7 +29,10 @@ else
     # Check if it's a syntax error or just missing packages
     if brew bundle list --file=Brewfile >/dev/null 2>&1; then
         echo "   ✅ Brewfile syntax is valid"
-        echo "   ℹ️  Some packages may not be installed (non-fatal)"
+        echo "   ❌ Brewfile packages not installed:"
+        brew bundle check --file=Brewfile --no-upgrade --verbose 2>/dev/null | grep '→' | sed 's/^/      /'
+        echo "      Fix: brew bundle install --no-upgrade --file=Brewfile"
+        exit 1
     else
         echo "   ❌ Brewfile has syntax errors"
         brew bundle list --file=Brewfile

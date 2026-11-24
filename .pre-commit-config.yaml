@@ -44,7 +44,8 @@ repos:
         # explicit list: .aliases/.functions have no shebang, so identify
         # doesn't tag them `shell`; override the hook's default type filter
         types: [text]
-        files: (^|/)(\.profile|\.aliases|\.functions|\.bashrc|\.bash_profile|\.macos)$|\.sh$|^bin/
+        files: (^|/)(\.profile|\.aliases|\.functions|\.zshrc|\.bashrc|\.bash_profile|\.macos)$|\.sh$|^bin/
+        args: [--severity=style] # every finding fails, not just warnings
   - repo: https://github.com/scop/pre-commit-shfmt
     rev: v3.14.1-1
     hooks:
@@ -67,6 +68,7 @@ repos:
     rev: v1.38.0
     hooks:
       - id: yamllint
+        args: [--strict] # warnings fail too
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.39.0
     hooks:

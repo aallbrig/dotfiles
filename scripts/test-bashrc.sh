@@ -34,10 +34,11 @@ fi
 # Check with shellcheck if available
 if command -v shellcheck >/dev/null 2>&1; then
     echo "📋 Running shellcheck on .bashrc..."
-    if shellcheck --shell=bash .bashrc .bash_profile; then
+    if shellcheck --shell=bash --severity=style .bashrc .bash_profile; then
         echo "   ✅ shellcheck passed"
     else
-        echo "   ⚠️  shellcheck found issues (non-fatal)"
+        echo "   ❌ shellcheck found issues"
+        exit 1
     fi
 fi
 
