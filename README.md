@@ -1,14 +1,18 @@
 # Andrew Allbright dotfiles
+
 Personal dotfiles. This is an upgrade from my ansible based computer setup scripts.
 
 ## Installation
 
 Download this repo locally. Run this script. The script is intentionally idempotent so please run it multiple times 😎
+
 ```bash
-./install.sh
+./install.sh            # links, oh-my-zsh, Homebrew (missing packages only), macOS defaults, git hooks
+./install.sh --links-only   # just (re)create the symlinks listed in symlinks.txt
 ```
 
 ### Manual steps
+
 For now, one must import unity profiles from the source code directory. Check out `unity_profiles` folder for unity profiles to import into the unity editor.
 
 ## File Structure
@@ -40,7 +44,9 @@ sudo apt install shellcheck  # Ubuntu/Debian
 Tests are also run automatically via GitHub Actions on push/PR.
 
 ## Uninstall
+
 In order to uninstall these dotfiles run the following commands.
+
 ```bash
 ./uninstall.sh
 ```

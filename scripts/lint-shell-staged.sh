@@ -10,7 +10,7 @@ if [ -z "$staged" ]; then
 fi
 while IFS= read -r file; do
     shellcheck --severity=style "$file"
-done << EOF
+done <<EOF
 $staged
 EOF
 echo "✅ Staged shell scripts passed shellcheck"

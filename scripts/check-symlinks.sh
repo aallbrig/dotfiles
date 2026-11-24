@@ -37,7 +37,7 @@ while read -r src dest; do
             echo "✅ $name"
         fi
     fi
-done < "$REPO_ROOT/symlinks.txt"
+done <"$REPO_ROOT/symlinks.txt"
 
 echo ""
 if [ "$OUT_OF_SYNC" -eq 0 ]; then

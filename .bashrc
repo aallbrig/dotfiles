@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # .bashrc - interactive bash configuration
 # Mirrors .zshrc so bash can be used as the primary shell.
 # Environment variables and PATH live in ~/.profile (loaded via ~/.bash_profile);
@@ -5,8 +6,8 @@
 
 # Only configure interactive shells
 case $- in
-  *i*) ;;
-  *) return ;;
+    *i*) ;;
+    *) return ;;
 esac
 
 # Non-login interactive shells (e.g. `bash` from zsh) haven't read ~/.profile
@@ -35,9 +36,9 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 
 # --- <3 tmux ---
 if [ -z "$INTELLIJ_ENVIRONMENT_READER" ]; then
-  if command -v tmux >/dev/null 2>&1 && [ -t 0 ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
-    exec tmux
-  fi
+    if command -v tmux >/dev/null 2>&1 && [ -t 0 ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+        exec tmux
+    fi
 fi
 
 # ssh-add run without arguments adds in default public keys
@@ -52,10 +53,10 @@ mkdir -p "${NVM_DIR:-$HOME/.nvm}"
 [ -s /opt/homebrew/opt/nvm/etc/bash_completion.d/nvm ] && . /opt/homebrew/opt/nvm/etc/bash_completion.d/nvm
 
 if command -v rbenv >/dev/null 2>&1; then
-  eval "$(rbenv init - bash)"
+    eval "$(rbenv init - bash)"
 fi
 if [ -x "$HOME/.local/bin/mise" ]; then
-  eval "$("$HOME"/.local/bin/mise activate bash)"
+    eval "$("$HOME"/.local/bin/mise activate bash)"
 fi
 
 # --- Completion ---
@@ -64,11 +65,11 @@ fi
 BREW_PREFIX=/opt/homebrew
 [ -d "$BREW_PREFIX" ] || BREW_PREFIX=/usr/local
 if [ -r "$BREW_PREFIX/etc/profile.d/bash_completion.sh" ]; then
-  # shellcheck source=/dev/null
-  . "$BREW_PREFIX/etc/profile.d/bash_completion.sh"
+    # shellcheck source=/dev/null
+    . "$BREW_PREFIX/etc/profile.d/bash_completion.sh"
 elif [ -r /usr/share/bash-completion/bash_completion ]; then
-  # shellcheck source=/dev/null
-  . /usr/share/bash-completion/bash_completion
+    # shellcheck source=/dev/null
+    . /usr/share/bash-completion/bash_completion
 fi
 
 # Tools that generate their own completion scripts. Output is cached in
@@ -77,15 +78,15 @@ fi
 _BASH_COMPLETION_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/bash-completion"
 mkdir -p "$_BASH_COMPLETION_CACHE"
 _source_completion() { # usage: _source_completion <command> <generator args...>
-  local name=$1 bin out
-  shift
-  bin=$(command -v "$name") || return 0
-  out="$_BASH_COMPLETION_CACHE/$name.bash"
-  if [ ! -s "$out" ] || [ "$bin" -nt "$out" ]; then
-    SHELL=bash "$@" >| "$out" 2>/dev/null
-  fi
-  # shellcheck source=/dev/null
-  . "$out"
+    local name=$1 bin out
+    shift
+    bin=$(command -v "$name") || return 0
+    out="$_BASH_COMPLETION_CACHE/$name.bash"
+    if [ ! -s "$out" ] || [ "$bin" -nt "$out" ]; then
+        SHELL=bash "$@" >|"$out" 2>/dev/null
+    fi
+    # shellcheck source=/dev/null
+    . "$out"
 }
 _source_completion kubectl kubectl completion bash
 _source_completion uv uv generate-shell-completion bash
@@ -107,14 +108,14 @@ command -v terraform >/dev/null 2>&1 && complete -o nospace -C "$(command -v ter
 
 # --- Prompt (git-aware) ---
 if [ -r "$BREW_PREFIX/etc/bash_completion.d/git-prompt.sh" ]; then
-  # shellcheck source=/dev/null
-  . "$BREW_PREFIX/etc/bash_completion.d/git-prompt.sh"
+    # shellcheck source=/dev/null
+    . "$BREW_PREFIX/etc/bash_completion.d/git-prompt.sh"
 fi
 if declare -F __git_ps1 >/dev/null 2>&1; then
-  export GIT_PS1_SHOWDIRTYSTATE=1
-  PS1='\[\e[36m\]\W\[\e[33m\]$(__git_ps1 " (%s)")\[\e[0m\] λ '
+    export GIT_PS1_SHOWDIRTYSTATE=1
+    PS1='\[\e[36m\]\W\[\e[33m\]$(__git_ps1 " (%s)")\[\e[0m\] λ '
 else
-  PS1='\[\e[36m\]\W\[\e[0m\] λ '
+    PS1='\[\e[36m\]\W\[\e[0m\] λ '
 fi
 unset BREW_PREFIX
 

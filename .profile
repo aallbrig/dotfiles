@@ -1,3 +1,4 @@
+# shellcheck shell=sh
 # .profile - POSIX-compliant environment variables
 # Sourced by login shells (sh, bash, zsh)
 
