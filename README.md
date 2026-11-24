@@ -19,6 +19,8 @@ This repository uses a shell-agnostic approach for portability:
 - **`.aliases`** - POSIX-compliant aliases (works in sh, bash, zsh, dash)
 - **`.functions`** - POSIX-compliant shell functions (works in sh, bash, zsh, dash). Optionally sources `~/.functions_untracked`, `~/.functions-untracked`, `~/.functions_work`, `~/.functions-work` if present.
 - **`.zshrc`** - Zsh-specific configuration (sources `.profile`, `.aliases`, and `.functions`)
+- **`.bashrc`** / **`.bash_profile`** - Bash equivalent of `.zshrc` (`.bash_profile` sources `.profile` then `.bashrc`). To switch your login shell to bash:
+  `echo /opt/homebrew/bin/bash | sudo tee -a /etc/shells && chsh -s /opt/homebrew/bin/bash`
 - Other dotfiles: `.gitconfig`, `.tmux.conf`, `.vimrc`, etc.
 
 ## Testing

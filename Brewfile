@@ -56,6 +56,10 @@ brew "sqlite"
 brew "shellcheck"
 brew "yamllint"
 
+# Shells
+brew "bash" # modern bash (macOS ships 3.2)
+brew "bash-completion@2"
+
 # VCS junkie
 brew "git"
 brew "hub"
