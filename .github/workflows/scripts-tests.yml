@@ -8,6 +8,7 @@ on:
       - 'uninstall.sh'
       - 'scripts/check-symlinks.sh'
       - 'scripts/test-scripts.sh'
+      - 'symlinks.txt'
   pull_request:
     branches: [ main, master ]
     paths:
@@ -15,6 +16,7 @@ on:
       - 'uninstall.sh'
       - 'scripts/check-symlinks.sh'
       - 'scripts/test-scripts.sh'
+      - 'symlinks.txt'
 
 jobs:
   test-scripts:

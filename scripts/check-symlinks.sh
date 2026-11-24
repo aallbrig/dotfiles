@@ -3,8 +3,7 @@
 # Reports missing, broken, or wrong-target symlinks and suggests
 # running install.sh to fix them.
 #
-# NOTE: The expected symlinks list below must be kept in sync with
-# install.sh and uninstall.sh when symlinks are added or removed.
+# The expected list is symlinks.txt (shared with install.sh/uninstall.sh).
 
 set -e
 
@@ -12,31 +11,15 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-# Expected symlinks: "target_path:source_path" (target is in $HOME, source is in repo)
-EXPECTED_SYMLINKS="
-$HOME/.profile:$REPO_ROOT/.profile
-$HOME/.aliases:$REPO_ROOT/.aliases
-$HOME/.functions:$REPO_ROOT/.functions
-$HOME/.zshrc:$REPO_ROOT/.zshrc
-$HOME/.bashrc:$REPO_ROOT/.bashrc
-$HOME/.bash_profile:$REPO_ROOT/.bash_profile
-$HOME/.gitconfig:$REPO_ROOT/.gitconfig
-$HOME/.tmux.conf:$REPO_ROOT/.tmux.conf
-$HOME/.ssh/config:$REPO_ROOT/ssh/config
-$HOME/.vimrc:$REPO_ROOT/.vimrc
-$HOME/.ideavimrc:$REPO_ROOT/.ideavimrc
-"
-
 OUT_OF_SYNC=0
 TOTAL=0
 
-for entry in $EXPECTED_SYMLINKS; do
-    # Skip empty lines
-    [ -z "$entry" ] && continue
-
-    target=$(echo "$entry" | cut -d: -f1)
-    source=$(echo "$entry" | cut -d: -f2-)
-    name=$(basename "$target")
+# Expected symlinks come from symlinks.txt: "<repo path>  <path relative to $HOME>"
+while read -r src dest; do
+    case "$src" in '' | '#'*) continue ;; esac
+    source="$REPO_ROOT/$src"
+    target="$HOME/$dest"
+    name="$dest"
     TOTAL=$((TOTAL + 1))
 
     if [ ! -e "$target" ] && [ ! -L "$target" ]; then
@@ -54,7 +37,7 @@ for entry in $EXPECTED_SYMLINKS; do
             echo "✅ $name"
         fi
     fi
-done
+done < "$REPO_ROOT/symlinks.txt"
 
 echo ""
 if [ "$OUT_OF_SYNC" -eq 0 ]; then

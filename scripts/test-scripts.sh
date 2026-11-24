@@ -17,10 +17,20 @@ fi
 
 echo ""
 
+FAILED=0
+
 # Scripts to check
 SCRIPTS="install.sh uninstall.sh scripts/check-symlinks.sh"
 
-FAILED=0
+# Every manifest source must exist in the repo
+while read -r src _dest; do
+    case "$src" in '' | '#'*) continue ;; esac
+    if [ ! -e "$src" ]; then
+        echo "❌ symlinks.txt lists missing file: $src"
+        FAILED=1
+    fi
+done < symlinks.txt
+
 for script in $SCRIPTS; do
     if [ ! -f "$script" ]; then
         echo "⚠️  File not found: $script"
@@ -29,12 +39,16 @@ for script in $SCRIPTS; do
     
     echo "📋 Checking $script..."
     
-    # Basic syntax check
-    if sh -n "$script" 2>/dev/null; then
+    # Basic syntax check with the interpreter named in the shebang
+    case "$(head -n 1 "$script")" in
+        *bash*) interp=bash ;;
+        *) interp=sh ;;
+    esac
+    if "$interp" -n "$script" 2>/dev/null; then
         echo "   ✅ Syntax check passed"
     else
         echo "   ❌ Syntax errors found"
-        sh -n "$script"
+        "$interp" -n "$script"
         FAILED=1
     fi
     

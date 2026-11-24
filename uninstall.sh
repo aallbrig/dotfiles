@@ -1,64 +1,27 @@
 #!/usr/bin/env bash
-# Uninstall script is meant to reverse the order of the install script
-# Currently, that is the responsibility of the developer/s working on the
-# project.
+# Remove the dotfile symlinks listed in symlinks.txt (only if they still
+# point into this repo). Restores <file>.old backups made by install.sh.
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "🦉 Uninstall script"
 
-if [[ -L "${HOME}"/.vimrc ]] ; then
-  echo "🪓 Deleting .vimrc"
-  rm "${HOME}"/.vimrc
+while read -r src dest; do
+	case "$src" in '' | '#'*) continue ;; esac
+	src="$REPO_ROOT/$src"
+	dest="$HOME/$dest"
+	if [[ -L "$dest" && "$(readlink "$dest")" = "$src" ]]; then
+		echo "🪓 Deleting ${dest/#"$HOME"/\~}"
+		rm "$dest"
+		if [[ -e "$dest.old" ]]; then
+			echo "♻️  Restoring ${dest/#"$HOME"/\~}.old"
+			mv "$dest.old" "$dest"
+		fi
+	fi
+done <"$REPO_ROOT/symlinks.txt"
+
+if [[ -e "$HOME/.untracked-gitconfig" ]]; then
+	echo "❌ it is up to the user to delete ~/.untracked-gitconfig"
 fi
-
-if [[ -L "${HOME}"/.ssh/config ]] ; then
-  echo "🪓 Deleting .ssh/config"
-  rm "${HOME}"/.ssh/config
-fi
-
-if [[ -e "${HOME}"/.ssh ]] ; then
-  echo "❌ it is up to the user to delete .ssh"
-fi
-
-
-if [[ -L "${HOME}"/.tmux.conf ]] ; then
-  echo "🪓 Deleting .tmux.conf"
-  rm "${HOME}"/.tmux.conf
-fi
-
-if [[ -L "${HOME}"/.gitconfig ]] ; then
-  echo "🪓 Deleting .gitconfig"
-  rm "${HOME}"/.gitconfig
-fi
-
-if [[ -e "${HOME}"/.untracked-gitconfig ]] ; then
-  echo "❌ it is up to the user to delete .untracked-gitconfig"
-fi
-
-echo "❌ it is up to the user to delete remove homebrew installation"
-
-if [[ -L "${HOME}"/.zshrc ]] ; then
-  echo "🪓 Deleting .zshrc"
-  rm "${HOME}"/.zshrc
-fi
-
-for f in .bashrc .bash_profile ; do
-  if [[ -L "${HOME}"/$f ]] ; then
-    echo "🪓 Deleting $f"
-    rm "${HOME}"/$f
-  fi
-done
-
-if [[ -L "${HOME}"/.aliases ]] ; then
-  echo "🪓 Deleting .aliases"
-  rm "${HOME}"/.aliases
-fi
-
-if [[ -L "${HOME}"/.functions ]] ; then
-  echo "🪓 Deleting .functions"
-  rm "${HOME}"/.functions
-fi
-
-if [[ -L "${HOME}"/.profile ]] ; then
-  echo "🪓 Deleting .profile"
-  rm "${HOME}"/.profile
-fi
+echo "❌ it is up to the user to remove oh-my-zsh, ~/.ssh and the homebrew installation"

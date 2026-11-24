@@ -1,19 +1,38 @@
 #!/usr/bin/env bash
+# Install dotfiles: symlink everything listed in symlinks.txt into $HOME,
+# then (unless --links-only / DOTFILES_LINKS_ONLY=1) install oh-my-zsh,
+# Homebrew packages, macOS defaults and git hooks.
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LINKS_ONLY="${DOTFILES_LINKS_ONLY:-0}"
+for arg in "$@"; do
+	case "$arg" in
+		--links-only) LINKS_ONLY=1 ;;
+		-h | --help)
+			echo "usage: $0 [--links-only]"
+			exit 0
+			;;
+		*)
+			echo "unknown argument: $arg" >&2
+			exit 2
+			;;
+	esac
+done
 
 setup_osx() {
 	# shellcheck source=/dev/null
-	source ./.macos
+	source "$REPO_ROOT/.macos"
 
-	if ! which brew &> /dev/null ; then
-	  # Install homebrew
-	  # source: https://brew.sh/
-	  echo "📀 Installing homebrew"
-	  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	if ! command -v brew &>/dev/null; then
+		# source: https://brew.sh/
+		echo "📀 Installing homebrew"
+		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 	fi
 
-	if ! brew bundle check --file ./Brewfile &> /dev/null ; then
-	  echo "🥳 Installing from brewfile"
-	  brew bundle install --file ./Brewfile
+	if ! brew bundle check --no-upgrade --file "$REPO_ROOT/Brewfile" &>/dev/null; then
+		echo "🥳 Installing from brewfile (missing packages only; run 'brew upgrade' to upgrade)"
+		brew bundle install --no-upgrade --file "$REPO_ROOT/Brewfile"
 	fi
 }
 
@@ -27,116 +46,61 @@ zsh_shell_setup() {
 				sudo apt install -y zsh
 			fi
 			echo "Setting default shell to zsh"
-			chsh -s "$(which zsh)"
+			chsh -s "$(command -v zsh)"
 		fi
 	fi
 
-	if [[ ! -d ~/.oh-my-zsh ]] ; then
-	  # Install .oh-my-zsh
-	  # source: https://github.com/ohmyzsh/ohmyzsh
-	  echo "🖥 Installing oh my zsh"
-	  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+	if [[ ! -d ~/.oh-my-zsh ]]; then
+		# source: https://github.com/ohmyzsh/ohmyzsh
+		echo "🖥 Installing oh my zsh"
+		RUNZSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	fi
+}
 
-	if [[ ! -L ~/.profile ]] ; then
-	  echo "🪓 Clearing non symbolic link .profile (if exists)"
-	  mv ~/.profile ~/.profile.old 2>/dev/null || true
-	  echo "🪱 Symlinking .profile"
-	  ln -s "$(pwd)/.profile" ~/.profile
+link_dotfiles() {
+	local src dest
+	while read -r src dest; do
+		case "$src" in '' | '#'*) continue ;; esac
+		src="$REPO_ROOT/$src"
+		dest="$HOME/$dest"
+		if [[ -L "$dest" && "$(readlink "$dest")" = "$src" ]]; then
+			continue
+		fi
+		mkdir -p "$(dirname "$dest")"
+		if [[ -e "$dest" || -L "$dest" ]]; then
+			echo "🪓 Moving existing ${dest/#"$HOME"/\~} to ${dest/#"$HOME"/\~}.old"
+			mv "$dest" "$dest.old"
+		fi
+		echo "🪱 Symlinking ${dest/#"$HOME"/\~}"
+		ln -s "$src" "$dest"
+	done <"$REPO_ROOT/symlinks.txt"
+}
+
+install_git_hooks() {
+	if command -v pre-commit &>/dev/null; then
+		echo "🪝 Installing git hooks (pre-commit, commit-msg, pre-push)"
+		(cd "$REPO_ROOT" && pre-commit install --install-hooks -t pre-commit -t commit-msg -t pre-push >/dev/null)
+	else
+		echo "⚠️  pre-commit not found; git hooks not installed (brew install pre-commit)"
 	fi
-
-	if [[ ! -L ~/.aliases ]] ; then
-	  echo "🪓 Clearing non symbolic link .aliases (if exists)"
-	  mv ~/.aliases ~/.aliases.old 2>/dev/null || true
-	  echo "🪱 Symlinking .aliases"
-	  ln -s "$(pwd)/.aliases" ~/.aliases
-	fi
-
-	if [[ ! -L ~/.functions ]] ; then
-	  echo "🪓 Clearing non symbolic link .functions (if exists)"
-	  mv ~/.functions ~/.functions.old 2>/dev/null || true
-	  echo "🪱 Symlinking .functions"
-	  ln -s "$(pwd)/.functions" ~/.functions
-	fi
-
-	if [[ ! -L ~/.zshrc ]] ; then
-	  echo "🪓 Clearing non symbolic link shell profile"
-	  mv ~/.zshrc ~/.zshrc.old
-	  echo "🪱 Symlinking shell profile"
-	  ln -s "$(pwd)/.zshrc" ~/.zshrc
-	fi
-
-	for f in .bashrc .bash_profile ; do
-	  if [[ ! -L ~/$f ]] ; then
-	    echo "🪓 Clearing non symbolic link $f (if exists)"
-	    mv ~/$f ~/$f.old 2>/dev/null || true
-	    echo "🪱 Symlinking $f"
-	    ln -s "$(pwd)/$f" ~/$f
-	  fi
-	done
 }
 
 main() {
+	link_dotfiles
+
+	if [[ ! -e ~/.untracked-gitconfig ]]; then
+		echo "❌ Expected File Not Found: ~/.untracked-gitconfig (pulled in by ~/.gitconfig)"
+	fi
+
+	if [[ "$LINKS_ONLY" = 1 ]]; then
+		return 0
+	fi
+
 	zsh_shell_setup
-
-	# probably don't need to call this out on a fresh install?
-	if [[ ! -e ~/.untracked-gitconfig ]] ; then
-	  echo "❌ Expected File Not Found: ~/.untracked-gitconfig (pulled in by ~/.gitconfig)"
-	fi
-
-	if [[ ! -L ~/.gitconfig ]] ; then
-	  echo "🪓 Clearing non symbolic link .gitconfig (if exists)"
-	  mv ~/.gitconfig ~/.gitconfig.old
-	  echo "🪱 Symlinking .gitconfig"
-	  ln -s "$(pwd)/.gitconfig" ~/.gitconfig
-	fi
-
-	if [[ ! -L ~/.tmux.conf ]] ; then
-	  echo "🪓 Clearing non symbolic link .tmux.conf (if exists)"
-	  mv ~/.tmux.conf ~/.tmux.conf.old
-	  echo "🪱 Symlinking .tmux.conf"
-	  ln -s "$(pwd)/.tmux.conf" ~/.tmux.conf
-	fi
-
-	if [[ ! -d ~/.ssh ]] ; then
-	  echo "📂 Creating .ssh directory"
-	  mkdir -p ~/.ssh
-	fi
-
-	if [[ ! -L ~/.ssh/config ]] ; then
-	  echo "🪓 Clearing non symbolic link .ssh/config (if exists)"
-	  mv ~/.ssh/config ~/.ssh/config.old
-	  echo "🪱 Symlinking .ssh/config"
-	  ln -s "$(pwd)/ssh/config" ~/.ssh/config
-	fi
-
-	if [[ ! -L ~/.vimrc ]] ; then
-	  echo "🪓 Clearing non symbolic link .vimrc (if exists)"
-	  mv ~/.vimrc ~/.vimrc.old
-	  echo "🪱 Symlinking .vimrc"
-	  ln -s "$(pwd)/.vimrc" ~/.vimrc
-	fi
-
-	if [[ ! -L ~/.ideavimrc ]] ; then
-	  echo "🪓 Clearing non symbolic link .ideavimrc (if exists)"
-	  mv ~/.ideavimrc ~/.ideavimrc.old 2>/dev/null || true
-	  echo "🪱 Symlinking .ideavimrc"
-	  ln -s "$(pwd)/.ideavimrc" ~/.ideavimrc
-	fi
-
-	if [[ ! -L ~/bin/git-churn ]] ; then
-	  echo "🪱 Symlinking git-churn script"
-	  ln -s "$(pwd)/bin/git-churn" ~/bin/git-churn
-	fi
-
-	if [[ ! -L ~/bin/git-bugfiles ]] ; then
-	  echo "🪱 Symlinking git-bugfiles script"
-	  ln -s "$(pwd)/bin/git-bugfiles" ~/bin/git-bugfiles
-	fi
-
-	if [ "$(uname)" = "Darwin" ]; then
+	if [[ "$(uname)" = "Darwin" ]]; then
 		setup_osx
 	fi
+	install_git_hooks
 }
 
 main
