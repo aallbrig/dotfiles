@@ -1,3 +1,8 @@
+# shellcheck shell=bash
+# ShellCheck has no zsh mode, so this file is checked as bash. Dynamic
+# `source` targets (SC1090/SC1091) can't be followed.
+# shellcheck disable=SC1090,SC1091
+
 # Load POSIX-compliant shell configuration
 [ -f ~/.profile ] && source ~/.profile
 [ -f ~/.aliases ] && source ~/.aliases
@@ -9,6 +14,7 @@ export ZSH=$HOME/.oh-my-zsh
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
+# shellcheck disable=SC2034 # read by oh-my-zsh
 ZSH_THEME="lambda"
 
 # Uncomment the following line to use case-sensitive completion.
@@ -53,6 +59,7 @@ ZSH_THEME="lambda"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
+# shellcheck disable=SC2034 # read by oh-my-zsh
 plugins=(git nvm)
 
 # Cached completions for tools that generate their own zsh completion scripts
@@ -89,14 +96,14 @@ if [[ -f $ZSH/oh-my-zsh.sh ]]; then
   _cache_completion stripe stripe completion --shell zsh --write-to-stdout
   unfunction _cache_completion
 
-  source $ZSH/oh-my-zsh.sh
+  source "$ZSH/oh-my-zsh.sh"
 else
   # oh-my-zsh not installed yet (e.g. after `install.sh --links-only`).
   # Don't create ~/.oh-my-zsh here: install.sh skips installing it if it exists.
   print -u2 "dotfiles: oh-my-zsh not found at $ZSH; run ./install.sh"
   ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
   mkdir -p "$ZSH_CACHE_DIR/completions"
-  fpath=("$ZSH_CACHE_DIR/completions" $fpath)
+  fpath=("$ZSH_CACHE_DIR/completions" "${fpath[@]}")
   autoload -Uz compinit && compinit
   unfunction _cache_completion
 fi
@@ -106,7 +113,7 @@ fi
 
 # List gen::* generator functions defined in ~/.*-shellrc files
 function available_generator_functions() {
-  cat $HOME/.*-shellrc | grep '^\w*function gen::.*()' | sed -e 's/function //g' -e 's/() {//g'
+  cat "$HOME"/.*-shellrc | grep '^\w*function gen::.*()' | sed -e 's/function //g' -e 's/() {//g'
 }
 alias agf='available_generator_functions'
 
@@ -151,8 +158,8 @@ _source_cached_completion npm npm completion
 unfunction _source_cached_completion _gen_completion
 
 # peon-ping quick controls
-alias peon="bash $HOME/.claude/hooks/peon-ping/peon.sh"
-[ -f $HOME/.claude/hooks/peon-ping/completions.bash ] && source $HOME/.claude/hooks/peon-ping/completions.bash
+alias peon='bash "$HOME/.claude/hooks/peon-ping/peon.sh"'
+[ -f "$HOME/.claude/hooks/peon-ping/completions.bash" ] && source "$HOME/.claude/hooks/peon-ping/completions.bash"
 
 if command -v rbenv >/dev/null 2>&1; then
   eval "$(rbenv init - zsh)"

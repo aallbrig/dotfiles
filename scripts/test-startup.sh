@@ -1,11 +1,10 @@
 #!/bin/sh
 # Start interactive zsh and bash login shells and fail if either writes
 # anything unexpected to stderr (e.g. a tool's init command breaking after an
-# upgrade). Also reports startup time and warns above a budget.
+# upgrade). Also fails if a shell takes longer than the startup budget.
 #
 # Env:
-#   STARTUP_BUDGET_SECS  warn threshold per shell (default 1.5)
-#   STARTUP_STRICT=1     treat a budget overrun as a failure
+#   STARTUP_BUDGET_SECS  max seconds per shell (default 1.5)
 
 BUDGET="${STARTUP_BUDGET_SECS:-1.5}"
 STATUS=0
@@ -36,8 +35,8 @@ check_shell() {
         echo "$unexpected" | sed 's/^/     /'
         STATUS=1
     elif [ "$(echo "$elapsed > $BUDGET" | bc)" -eq 1 ]; then
-        echo "🐢 $label started cleanly but took ${elapsed}s (budget ${BUDGET}s)"
-        [ "${STARTUP_STRICT:-0}" = 1 ] && STATUS=1
+        echo "❌ $label started cleanly but took ${elapsed}s (budget ${BUDGET}s)"
+        STATUS=1
     else
         echo "✅ $label started cleanly in ${elapsed}s"
     fi

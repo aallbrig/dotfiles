@@ -52,7 +52,7 @@ jobs:
       - name: Interactive shells start without errors
         run: ./scripts/test-startup.sh
         env:
-          STARTUP_BUDGET_SECS: "3"
+          STARTUP_BUDGET_SECS: "5" # first start also generates completion caches
 
   secrets:
     name: Secrets scan (full history)
