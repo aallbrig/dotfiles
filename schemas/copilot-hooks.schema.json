@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/aallbrig/dotfiles/schemas/copilot-hooks.schema.json",
+  "title": "GitHub Copilot CLI hooks (.github/hooks/*.json)",
+  "description": "Local schema (GitHub publishes none). Event names are strict to catch typos; per-hook fields beyond type/bash/powershell are allowed.",
+  "type": "object",
+  "required": [
+    "version",
+    "hooks"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "hooks": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(sessionStart|sessionEnd|userPromptSubmitted|preToolUse|postToolUse|errorOccurred)$": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hook"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "hook": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "bash"
+          ]
+        },
+        {
+          "required": [
+            "powershell"
+          ]
+        }
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "bash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "powershell": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

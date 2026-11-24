@@ -1,6 +1,29 @@
 version: '3'
 
 tasks:
+  # --- One command for everything CI runs ---
+  ci:
+    desc: Run every quality gate (same as GitHub Actions lint job)
+    cmds:
+      - pre-commit run --all-files --hook-stage manual
+      - sh scripts/test-all.sh
+
+  # --- Git hooks ---
+  hooks:install:
+    desc: Install pre-commit, commit-msg and pre-push git hooks
+    cmds:
+      - pre-commit install --install-hooks
+
+  hooks:update:
+    desc: Bump pinned hook revisions to their latest releases
+    cmds:
+      - pre-commit autoupdate
+
+  test-startup:
+    desc: Start interactive zsh/bash and fail on stderr noise; report startup time
+    cmds:
+      - ./scripts/test-startup.sh
+
   # --- Secrets ---
   secrets-staged:
     desc: Scan staged files for leaked secrets (pre-commit)
@@ -14,9 +37,9 @@ tasks:
 
   # --- Linting ---
   lint:
-    desc: Run all linters
+    desc: Run all linters (pre-commit, all files)
     cmds:
-      - task: lint-shell
+      - pre-commit run --all-files
 
   lint-shell:
     desc: Shellcheck all shell scripts in the repo
@@ -66,8 +89,6 @@ tasks:
 
   # --- Pre-commit (composite) ---
   precommit:
-    desc: Run all pre-commit checks (secrets scan + staged shell lint + tmux config)
+    desc: Run the pre-commit hooks against staged files
     cmds:
-      - task: secrets-staged
-      - task: lint-shell-staged
-      - task: test-tmux
+      - pre-commit run

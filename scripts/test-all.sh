@@ -11,11 +11,11 @@ FAILED=0
 
 # Run each test script
 for test_script in scripts/test-*.sh; do
-    # Skip test-all.sh to avoid recursion
-    if [ "$test_script" = "scripts/test-all.sh" ]; then
+    # Skip test-all.sh (recursion) and test-startup.sh (needs installed dotfiles; runs in CI smoke job + pre-push)
+    if [ "$test_script" = "scripts/test-all.sh" ] || [ "$test_script" = "scripts/test-startup.sh" ]; then
         continue
     fi
-    
+
     if [ -f "$test_script" ]; then
         if sh "$test_script"; then
             echo ""
