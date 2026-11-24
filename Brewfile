@@ -55,6 +55,12 @@ brew "sqlite"
 # static analysis
 brew "shellcheck"
 brew "yamllint"
+brew "shfmt"
+brew "actionlint"
+brew "check-jsonschema"
+brew "gitleaks"
+brew "pre-commit"
+brew "go-task" # Taskfile runner (replaces the deprecated go-task/tap)
 
 # Shells
 brew "bash" # modern bash (macOS ships 3.2)
@@ -79,7 +85,7 @@ cask "visual-studio-code"
 # cask "vmware-horizon-client"
 
 # cloud native engineering
-cask "docker"
+cask "docker-desktop"
 brew "minikube"
 brew "kubernetes-cli"
 brew "helm"
