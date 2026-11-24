@@ -34,6 +34,11 @@ tasks:
     cmds:
       - ./scripts/test-zshrc.sh
 
+  test-bashrc:
+    desc: Test .bashrc/.bash_profile syntax and structure
+    cmds:
+      - ./scripts/test-bashrc.sh
+
   test-scripts:
     desc: Test install/uninstall scripts
     cmds:

@@ -41,6 +41,13 @@ if [[ -L "${HOME}"/.zshrc ]] ; then
   rm "${HOME}"/.zshrc
 fi
 
+for f in .bashrc .bash_profile ; do
+  if [[ -L "${HOME}"/$f ]] ; then
+    echo "🪓 Deleting $f"
+    rm "${HOME}"/$f
+  fi
+done
+
 if [[ -L "${HOME}"/.aliases ]] ; then
   echo "🪓 Deleting .aliases"
   rm "${HOME}"/.aliases

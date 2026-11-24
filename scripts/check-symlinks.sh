@@ -18,6 +18,8 @@ $HOME/.profile:$REPO_ROOT/.profile
 $HOME/.aliases:$REPO_ROOT/.aliases
 $HOME/.functions:$REPO_ROOT/.functions
 $HOME/.zshrc:$REPO_ROOT/.zshrc
+$HOME/.bashrc:$REPO_ROOT/.bashrc
+$HOME/.bash_profile:$REPO_ROOT/.bash_profile
 $HOME/.gitconfig:$REPO_ROOT/.gitconfig
 $HOME/.tmux.conf:$REPO_ROOT/.tmux.conf
 $HOME/.ssh/config:$REPO_ROOT/ssh/config

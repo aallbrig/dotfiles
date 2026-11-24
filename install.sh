@@ -65,6 +65,15 @@ zsh_shell_setup() {
 	  echo "🪱 Symlinking shell profile"
 	  ln -s "$(pwd)/.zshrc" ~/.zshrc
 	fi
+
+	for f in .bashrc .bash_profile ; do
+	  if [[ ! -L ~/$f ]] ; then
+	    echo "🪓 Clearing non symbolic link $f (if exists)"
+	    mv ~/$f ~/$f.old 2>/dev/null || true
+	    echo "🪱 Symlinking $f"
+	    ln -s "$(pwd)/$f" ~/$f
+	  fi
+	done
 }
 
 main() {
