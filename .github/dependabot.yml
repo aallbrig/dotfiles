@@ -1,0 +1,13 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7   # let new releases age a week before adopting (supply-chain hygiene)
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns: ["*"]

@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint & validate (pre-commit + test scripts)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - name: Install system tools used by local hooks
+        run: sudo apt-get update && sudo apt-get install -y zsh dash tmux vim shellcheck
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+      - run: pip install pre-commit
+      - name: pre-commit (all files)
+        run: pre-commit run --all-files --show-diff-on-failure --hook-stage manual
+      - name: Test scripts
+        run: sh scripts/test-all.sh
+
+  smoke:
+    name: macOS install + shell startup smoke test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install oh-my-zsh (unattended, keep our .zshrc)
+        run: git clone --depth 1 https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
+      - name: Link dotfiles
+        run: ./install.sh --links-only
+      - name: Symlinks in sync
+        run: sh scripts/check-symlinks.sh
+      - name: Interactive shells start without errors
+        run: ./scripts/test-startup.sh
+        env:
+          STARTUP_BUDGET_SECS: "3"
+
+  secrets:
+    name: Secrets scan (full history)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
