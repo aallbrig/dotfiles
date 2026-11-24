@@ -10,11 +10,13 @@ Host github.com-work
     PreferredAuthentications publickey
     IdentityFile ~/.ssh/id_rsa_work
     IdentitiesOnly yes
+    AddKeysToAgent yes
 
 Host *amazonaws.com
     IdentityFile ~/.ssh/andrew-allbright-keypair.pem
     User ec2-user
 
-Host *
+# Excludes the work host so it never falls back to the personal key
+Host * !github.com-work
     AddKeysToAgent yes
     IdentityFile ~/.ssh/id_ed25519

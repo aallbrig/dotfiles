@@ -29,7 +29,10 @@ HISTSIZE=50000
 HISTFILESIZE=100000
 HISTCONTROL=ignoreboth:erasedups
 HISTTIMEFORMAT='%F %T '
-PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+case "$PROMPT_COMMAND" in
+    *"history -a"*) ;; # already set (e.g. re-sourcing .bashrc)
+    *) PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}" ;;
+esac
 
 # macOS: silence the "default shell is now zsh" notice
 export BASH_SILENCE_DEPRECATION_WARNING=1
@@ -74,7 +77,8 @@ fi
 
 # Tools that generate their own completion scripts. Output is cached in
 # ~/.cache/bash-completion and regenerated only when missing or older than
-# the tool binary (some generators take ~0.5s each).
+# the tool binary (some generators take ~0.5s each). Writes are atomic and a
+# failed generator never replaces a good cache, so a broken file can't stick.
 _BASH_COMPLETION_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/bash-completion"
 mkdir -p "$_BASH_COMPLETION_CACHE"
 _source_completion() { # usage: _source_completion <command> <generator args...>
@@ -83,10 +87,14 @@ _source_completion() { # usage: _source_completion <command> <generator args...>
     bin=$(command -v "$name") || return 0
     out="$_BASH_COMPLETION_CACHE/$name.bash"
     if [ ! -s "$out" ] || [ "$bin" -nt "$out" ]; then
-        SHELL=bash "$@" >|"$out" 2>/dev/null
+        if SHELL=bash "$@" >|"$out.tmp.$$" 2>/dev/null && [ -s "$out.tmp.$$" ]; then
+            mv -f "$out.tmp.$$" "$out"
+        else
+            rm -f "$out.tmp.$$"
+        fi
     fi
     # shellcheck source=/dev/null
-    . "$out"
+    [ -s "$out" ] && . "$out"
 }
 _source_completion kubectl kubectl completion bash
 _source_completion uv uv generate-shell-completion bash

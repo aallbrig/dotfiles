@@ -15,6 +15,13 @@ export LSCOLORS=GxFxCxDxBxegedabagaced
 # Kubernetes configuration
 export KUBECONFIG="$HOME/.kube/config"
 
+# Homebrew (puts brew, gh, tmux, go, ... on PATH for every login shell)
+if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /usr/local/bin/brew ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+fi
+
 # Go configuration
 GOPATH=$(go env GOPATH 2>/dev/null || echo "$HOME/go")
 export GOPATH

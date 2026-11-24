@@ -22,7 +22,9 @@ fi
 echo "📋 Validating .tmux.conf..."
 # Use a named socket so this never touches an active tmux session
 TMUX_SOCKET="dotfiles-validate"
-if output=$(tmux -L "$TMUX_SOCKET" -f .tmux.conf start-server \; kill-server 2>&1); then
+# start-server alone ignores config errors; sourcing into a session reports them
+if output=$(tmux -L "$TMUX_SOCKET" -f /dev/null new-session -d \; source-file .tmux.conf \; kill-server 2>&1) &&
+    [ -z "$output" ]; then
     echo "   ✅ .tmux.conf syntax is valid"
 else
     echo "   ❌ .tmux.conf has syntax errors"
