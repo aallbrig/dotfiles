@@ -1,0 +1,16 @@
+# Dotfile symlink manifest: <path in repo>  <path relative to $HOME>
+# Read by install.sh, uninstall.sh and scripts/check-symlinks.sh.
+# Adding a dotfile = adding one line here.
+.profile            .profile
+.aliases            .aliases
+.functions          .functions
+.zshrc              .zshrc
+.bashrc             .bashrc
+.bash_profile       .bash_profile
+.gitconfig          .gitconfig
+.tmux.conf          .tmux.conf
+ssh/config          .ssh/config
+.vimrc              .vimrc
+.ideavimrc          .ideavimrc
+bin/git-churn       bin/git-churn
+bin/git-bugfiles    bin/git-bugfiles
